@@ -322,7 +322,6 @@ nonlocal 关键字
 1. := 海象运算符号，在***表达式中同时进行赋值和返回赋值的值
 """
 
-
 # num1 = 2
 # print((num2 := 3 ** 2) > num1)  # 在表达式中即赋值了num2值 同时也返回了num2的值
 # # print((num2=3**2) > num1) #直接报错
@@ -337,7 +336,72 @@ nonlocal 关键字
 # max_num = num2 if num1 > num2 else num1
 # print(max_num)
 
-# 递归解题 : 终止条件式 n > 1不成立，则返回 else 1 语句里的1， 且不再调用 n * get_factorial(n)
-def get_factorial(n):
-    return n * get_factorial(n - 1) if n > 1 else 1
-print(get_factorial(5))
+# 递归解题 : 终止条件式 n > 1不成立，则返回 else 1 语句里的1， 且不再调用 n * get_factorial(n)； 紧接着就开始出栈操作依次计算
+# 2 * （get_factorial return 1） = 2 ； 3*（get_factorial return 2） ;
+# def get_factorial(n):
+#     return n * get_factorial(n - 1) if n > 1 else 1
+# print(get_factorial(5))
+
+# ===================================匿名函数==============================
+"""
+1. 匿名函数使用lambda来定义匿名函数；
+2. lambda只是一个表达式，不是一个代码块，所以，仅仅能在lambda表达式中封装有限的逻辑进去；
+3. lambda函数有自己的命名空间，且不能访问自己参数列表之外或全局命名空间里的参数；
+
+"""
+
+#
+# # 匿名函数传参
+# def operator(a, b):
+#     return a + b
+#
+# def function(a, b, operator):
+#     return operator(a, b)
+#
+# print(function(1, 3, operator))
+# #匿名函数使用
+# print(function(1, 3, lambda x, y: x + y))
+
+# 内置匿名函数使用
+#sort
+# student_list = [{"name": "chang", "age": 30}, {"name": "liu", "age": 36}, {"name": "liu2", "age": 33}]
+# list = [1, 2, 4, 0]
+# print(sorted(student_list, key=lambda x: x['age']))
+# print(sorted(list, key=lambda x: x))
+
+#map
+# print(help(map))
+# m = map(lambda x: x * 2, [1, 3, 5])
+# print(list(m))
+# map_map = map(lambda x: x['b'],[{"a": 1, "b": 2}])
+# print(list(map_map))
+# map1 = map(lambda x: x[0], {"a": 1, "b": 2, "d": 2, "f": 2}.items())
+# print(list(map1))
+# map2 = map(lambda x:x,"s-d-f-a-f-a-d-f".split('-'))
+# print(list(map2))
+
+#filter
+# print(help(filter))
+# f = filter(lambda x: x>2,[1, 2, 3, 4])
+# print(list(f))
+
+#reduce
+from functools import reduce
+# print(help(reduce))
+# i = reduce(lambda x, y: x + y, [1, 2, 3],20)
+# print(i)
+
+#====================================注释======================================
+"""
+增强函数的注释功能；(是对形参的注释，可以是数据类型，作用，取值范围，也可以是任何其他)
+
+"""
+def dog (name : str ,age:(1,99), species:"狗币") -> tuple:
+    return (name ,age,species)
+print(dog.__annotations__)
+
+
+
+
+
+
