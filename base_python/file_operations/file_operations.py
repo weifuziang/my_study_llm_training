@@ -57,14 +57,14 @@ import os
 
 # 拷贝文件
 
-fr = open("../../data/test.txt", "rb")
-fw = open("../../data/test2.txt", "wb")
-content = fr.read(1024)
-while content:
-    fw.write(content)
-    content = fr.read(1024)
-fw.close()
-fr.close()
+# fr = open("../../data/test.txt", "rb")
+# fw = open("../../data/test2.txt", "wb")
+# content = fr.read(1024)
+# while content:
+#     fw.write(content)
+#     content = fr.read(1024)
+# fw.close()
+# fr.close()
 
 
 
