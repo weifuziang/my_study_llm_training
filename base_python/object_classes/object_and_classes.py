@@ -315,65 +315,96 @@ delattr(对象，属性名)
 
 #多继承
 
-class Person:
-    """人的类"""
+# class Person:
+#     """人的类"""
+#
+#     home = "earth"
+#
+#     def __init__(self, name):
+#         self.name = name
+#
+#     def eat(self):
+#         print("eating...")
+#
+# class YellowRace(Person):
+#     """黄种人"""
+#
+#     color = "yellow"
+#
+#     def run(self):
+#         print("runing...")
+#
+# class Student(Person):
+#     """学生"""
+#
+#     def __init__(self, name, grade):
+#         self.name = name
+#         self.grade = grade
+#
+#     def study(self):
+#         print("先吃在学...")
+#         #父类中方法的调用
+#         Person.eat(self)
+#         super().eat()
+#
+#     #重写父类中的方法
+#     def eat(self):
+#         print("用勺子吃....")
+#
+#         print("studying...")
+#     #重写父类中的__init__()方法: 使用super().__init__调取
+#     # def __int__(self,name ,age,weight):
+#     #     super().__init__(name)
+#     #     self.age = 18
+#     #     self.weight = 20
+#
+# class ChinesStudent(YellowRace,Student):
+#     """中国学生"""
+#     country="中国"
 
-    home = "earth"
 
-    def __init__(self, name):
-        self.name = name
-
-    def eat(self):
-        print("eating...")
-
-class YellowRace(Person):
-    """黄种人"""
-
-    color = "yellow"
-
-    def run(self):
-        print("runing...")
-
-class Student(Person):
-    """学生"""
-
-    def __init__(self, name, grade):
-        self.name = name
-        self.grade = grade
-
-    def study(self):
-        print("先吃在学...")
-        #父类中方法的调用
-        Person.eat(self)
-        super().eat()
-
-    #重写父类中的方法
-    def eat(self):
-        print("用勺子吃....")
-
-        print("studying...")
-    #重写父类中的__init__()方法: 使用super().__init__调取
-    # def __int__(self,name ,age,weight):
-    #     super().__init__(name)
-    #     self.age = 18
-    #     self.weight = 20
-
-class ChinesStudent(YellowRace,Student):
-    """中国学生"""
-    country="中国"
-
-
-student = ChinesStudent("张三","三年级")
-student.study()
-student.eat()
-print(student.country)
-print(student.color)
-
-#查看方法调用顺序
-print(ChinesStudent.__mro__)
+# student = ChinesStudent("张三","三年级")
+# student.study()
+# student.eat()
+# print(student.country)
+# print(student.color)
+#
+# #查看方法调用顺序
+# print(ChinesStudent.__mro__)
 
 #====================================多态===========================================
+"""
+1. 同一事物在不同场景下呈现不同状态；
+"""
+class Person2:
+    def sleep(self):
+        pass
+    def running(self):
+        pass
 
+class Animal:
+    def go(self):
+        pass
+    def eat(self):
+        pass
+class Dog(Animal):
+    def go(self):
+        print("跑。。。")
+class Fish(Animal):
+    def go(self):
+        print("水里游。。。")
+
+#将不同的实例传入，执行不同的方法
+def go(animal):
+    animal.go()
+    animal.eat()
+    # animal.running()
+    # animal.eat()
+
+dog = Dog()
+fish = Fish()
+go(dog)
+go(fish)
 
 
 
