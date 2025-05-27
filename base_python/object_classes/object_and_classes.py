@@ -33,36 +33,36 @@
 """
 
 
-class Person:
-    """人的类"""
-    home = "earth"  # 类属性（类变量）
-
-    @classmethod
-    def class_method(cls):  # 类方法：可以访问类和实体的属性; 被类和实体对象调用
-        print("类方法被调用")
-        print(cls.home)
-        print(cls.eat)
-
-    @staticmethod
-    def static_method():  # 静态方法：不访问实体属性和类属性；被类和实体对象调用
-        print("static_method")
-
-    def __init__(self, name, home=home):
-        self.age = 18  # 实体属性（实体变量）
-        self.name = name
-        self.home = home
-
-    def eat(self):  # 方法
-        print("eating......")
-
-    def drink(self):  # 方法
-        print("drinking......")
-
-    def eat_and_drink(self):
-        print(self.name)
-        print(self.age)
-        self.eat()
-        self.drink()
+# class Person:
+#     """人的类"""
+#     home = "earth"  # 类属性（类变量）
+#
+#     @classmethod
+#     def class_method(cls):  # 类方法：可以访问类和实体的属性; 被类和实体对象调用
+#         print("类方法被调用")
+#         print(cls.home)
+#         print(cls.eat)
+#
+#     @staticmethod
+#     def static_method():  # 静态方法：不访问实体属性和类属性；被类和实体对象调用
+#         print("static_method")
+#
+#     def __init__(self, name, home=home):
+#         self.age = 18  # 实体属性（实体变量）
+#         self.name = name
+#         self.home = home
+#
+#     def eat(self):  # 方法
+#         print("eating......")
+#
+#     def drink(self):  # 方法
+#         print("drinking......")
+#
+#     def eat_and_drink(self):
+#         print(self.name)
+#         print(self.age)
+#         self.eat()
+#         self.drink()
 
 
 # 调用
@@ -208,12 +208,172 @@ delattr(对象，属性名)
 ## ===================================面向对象之三大特性================================
 """
 1. 封装
+    1> 定义：将变量和函数，封装到类的属性和方法中；
+    2> 作用：将一些细节私有化，只暴漏出必要的接口供调用者使用；
+        私有化：
+            单下划线（非公开API）:
+            双下划线（名称改写）:私有属性、私有方法
 
 2. 继承
+    1> 子类不能继承父类的私用属性和私有方法，因为存在名称改写；
+    2> 单继承 、多继承
+    
 
 3. 多态
 
 """
+
+##===封装===
+# class Person2:
+#     age = 38
+#     #私有属性
+#     def __init__(self,name,age = 18):
+#         self.__name = name
+#         self.age = age
+#     #获取私有属性的方法
+#     def get_name(self):
+#         return self.__name
+#
+#     #私有方法
+#     def __private_method(self):
+#         print("private method")
+#
+#     #私有方法调用
+#
+#     def get_something(self):
+#         self.__private_method()
+#
+#     #@property注解: 将一个方法转化成属性来调用，即.方法名，不需要后面的"()"
+#
+#     @property
+#     def sleep(self):
+#         print(f"{self.__name} is sleeping")
+#
+#     #只读属性
+#     #@property注解: 将私有属性去掉双下划线，作为方法的命名名称，方法中返回私用属性(即属性转方法,且将属性转成了只读属性)
+#     @property
+#     def name(self):
+#         return self.__name
+#
+#     #读权限属性：setter
+#     @name.setter
+#     def name(self,name):
+#         if name == "zhangsan":
+#             print("不允许设置zhangsan")
+#         else:
+#             self.__name = name
+#
+#     #@property注解的名字不能和变量名一致，否则会出现死循环的问题
+#     @property
+#     def age(self):
+#         return self.age
+#
+#
+# person_ = Person2("liuliuliu",28)
+# print(person_.get_name())
+# # print(person_.__name) #报错
+# print(person_.age)
+# person_.get_something()
+# # person_.__private_method() #报错
+#
+# person_.sleep
+# print(person_.name)
+# person_.name="gai liu zi"
+# print(person_.get_name())
+#
+# person_.name="zhangsan"
+# print(person_.get_name())
+#
+# print(person_.age)# 用@property 注解了age命名的方法，会直接报错
+
+##===继承===
+#单继承
+# class Person:
+#     """人类"""
+#     home = "earth"
+#     def __init__(self, name=None):
+#         self.name = name
+#     def drink(self):
+#         print("drinking......")
+#
+# class YellowRace(Person):
+#     """黄种人"""
+#     color = "yellow"
+#
+# class WhiteRace(Person):
+#     """白种人"""
+#     color = "white"
+#
+# class BlackRace(Person):
+#     """黑种人"""
+#     color = "black"
+#
+# yellowRace = YellowRace("zhangsan")
+# print(yellowRace.name)
+# print(yellowRace.color)
+# yellowRace.drink()
+
+#多继承
+
+class Person:
+    """人的类"""
+
+    home = "earth"
+
+    def __init__(self, name):
+        self.name = name
+
+    def eat(self):
+        print("eating...")
+
+class YellowRace(Person):
+    """黄种人"""
+
+    color = "yellow"
+
+    def run(self):
+        print("runing...")
+
+class Student(Person):
+    """学生"""
+
+    def __init__(self, name, grade):
+        self.name = name
+        self.grade = grade
+
+    def study(self):
+        print("先吃在学...")
+        #父类中方法的调用
+        Person.eat(self)
+        super().eat()
+
+    #重写父类中的方法
+    def eat(self):
+        print("用勺子吃....")
+
+        print("studying...")
+    #重写父类中的__init__()方法: 使用super().__init__调取
+    # def __int__(self,name ,age,weight):
+    #     super().__init__(name)
+    #     self.age = 18
+    #     self.weight = 20
+
+class ChinesStudent(YellowRace,Student):
+    """中国学生"""
+    country="中国"
+
+
+student = ChinesStudent("张三","三年级")
+student.study()
+student.eat()
+print(student.country)
+print(student.color)
+
+#查看方法调用顺序
+print(ChinesStudent.__mro__)
+
+#====================================多态===========================================
+
 
 
 
