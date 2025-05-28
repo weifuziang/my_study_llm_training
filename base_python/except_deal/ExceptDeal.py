@@ -112,7 +112,7 @@ finally:
 ##===常见的异常===
 """
 1. BaseException: 所有内置异常的基类，不被用户继承；
-2. Exception: 所有内置的肺系统退出类异常都派生此类，可用户自定义继承；
+2. Exception: 所有内置的非系统退出类异常都派生此类，可用户自定义继承；
 3. ArithmeticError: 此基类用户派生针对于各种算术类错误引发的异常；
 4. BufferError: 当缓冲区相关的操作无法执行时将被引发；
 5. LookupError: 此基类用户派生 映射或序列所使用的键或索引无效时引发的异常：IndexError ,KeyError
