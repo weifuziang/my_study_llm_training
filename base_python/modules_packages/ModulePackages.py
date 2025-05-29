@@ -99,6 +99,40 @@ import sys
 # print(graphic.circle.area(10)) #报错
 
 ###===常用标准库===
+"""
+os
+sys
+time
+datetime
+math
+random
+re
+json
+collections
+functools
+hashlib
+urllib
+smtplib
+zlib
+gzip
+bz2
+multiprocessing
+threading
+copy
+socket
+shutil
+glob
+"""
+
+###=====================打包=============
+"""
+1. 打包：python setup.py build
+2. 打成压缩包：python setup.py sdist
+3. 安装自己的打的包：pip install /Users/wfz/MyJob/MyCode/llm/my_study_llm_training/base_python/modules_packages/dist/graphic-0.1.tar.gz
+4. pycharm 也可以安装自己本地打的zip包
+"""
+
+
 
 
 
