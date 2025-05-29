@@ -117,5 +117,14 @@ finally:
 4. BufferError: 当缓冲区相关的操作无法执行时将被引发；
 5. LookupError: 此基类用户派生 映射或序列所使用的键或索引无效时引发的异常：IndexError ,KeyError
                  可通过codecs.lookup直接引发
+6. AssertionError: 当assert语句失败时被引发；
+7. AttributeError: 当属性引用或者赋值是被引发；
+8. IndexError:
+9. KeyError:
+10. KeyboardInterrupt:
+11. MemoryError:
+12. NameError:
+
+
 """
 
