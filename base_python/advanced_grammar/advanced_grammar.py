@@ -349,7 +349,6 @@ class DecoratorClass:
 @DecoratorClass
 def func(x):
     return sqrt(x)
-
 print(func(-4))
 
 
