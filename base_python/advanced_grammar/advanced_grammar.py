@@ -254,7 +254,74 @@ x = 1 #global
 # set_name("Alice")
 # print(get_name()) # 输出 "Alice"
 
-#装饰器的应用？？？？
+#===装饰器的应用？？？？
+"""
+1. 本质是一个接收函数作为输入并返回一个新的包装后的函数对象，所以装饰器应该是一个闭包形式的函数；
+2. 作用：在不修改原有函数代码的基础上，动态的增加或者修改函数的功能；
+3. 多个装饰器时，是从上到下一次执行
+"""
+#例子1：
+from math import sqrt
+def decorator(f):
+    def inner(y):
+        y = abs(y)
+        return f(y)
+    return inner
+
+def func(x):
+    """开根号"""
+    return sqrt(x)
+#直接传递函数的装饰器调用
+f = decorator(func)
+print(f(-4))
+
+#装饰器的@decorator使用
+@decorator
+def func2(x):
+    """开根号2"""
+    return sqrt(x)
+
+print(func2(-9))
+
+#例子2：多个装饰器的装饰过程
+def get_integer(f):
+    def inner1(x):
+        # x=int(x)
+        x=-x
+        return f(x)
+    return inner1
+
+def get_absolute(f):
+    def inner2(x):
+        x =abs(x)
+        return f(x)
+    return inner2
+
+# @get_absolute
+@get_integer
+def func3(x):
+    """开根号"""
+    return sqrt(x)
+print(func3(-16))
+
+#例子3：带参数的装饰器
+from math import sqrt
+def times(n):
+    def get_absolute(f):
+        def inner(x):
+            x =abs(x)
+            for i in range(n):
+                x = f(x+n)
+                return x
+        return inner
+    return get_absolute
+@times(20)
+def func2(x):
+    return sqrt(x)
+print(func2(-16))
+
+
+#例子4：
 def call_counter(func1):
     count = 0
     def wrapper2(*args, **kwargs):
@@ -271,6 +338,19 @@ def greet(name):
 greet("Alice")  # 输出: 函数 greet 被调用了 1 次 → Hello, Alice!
 greet("Bob")    # 输出: 函数 greet 被调用了 2 次 → Hello, Bob!
 
+#类的装饰器: 必须实现__init__()函数中传递func并进行类成员的赋值,__call_()函数中传递func的入参，并return func(x)
+class DecoratorClass:
+    def __init__(self, f):
+        self.f = f
+
+    def __call__(self, x):
+        x=abs(x)
+        return self.f(x)
+@DecoratorClass
+def func(x):
+    return sqrt(x)
+
+print(func(-4))
 
 
 
