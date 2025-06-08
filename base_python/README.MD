@@ -1,0 +1,1 @@
+ pip install starlette uvicorn requests
