@@ -39,6 +39,42 @@ O(1) < O(logn) < O(n) < O(nlogn) < O(n^2) < O(2^n) < O(n!) < O(n^n)
 
 
 空间复杂度：
+1. 用来描述一个算法运行所需要内存空间的多好。
+2. 同时间复杂度类似，统建复杂度并不代表算法运行时所使用的绝对内存空间；
+3. 它描述的是算法使用的内存空间随输入规模变大时的变化趋势；
+4. 所占内存的内容：
+    指令：程序编译后的二进制指令；
+    数据：程序声明的变量、常亮、对象等内容；
+    一般只需要关注数据所占用的内存空间即可；
+5. 常见的空间复杂度：
+    O(1) ： 常数阶常见于数量与输入数据大小无关的常量、变量、对象。
+    def reverse_array(arr):
+    left, right = -1, len(arr)
+    while (left := left + 1) < (right := right - 1):
+        arr[left], arr[right] = arr[right], arr[left]
+
+    O(n):判断数组中是否有重复的元素
+    def has_duplicates(arr):
+    seen = set()
+    for num in arr:
+        if num in seen:
+            return True
+        seen.add(num)
+    return False
+
+    O(n^2): 矩阵转置
+    def transpose(matrix):
+    n = len(matrix)
+    result = [[0] * n for _ in range(n)]
+
+    for i in range(n):
+        for j in range(n):
+            result[j][i] = matrix[i][j]
+
+    return result
+
+
+
 
 """
 
