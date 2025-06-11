@@ -158,7 +158,7 @@ class Array:
 1. 特点：逻辑上是线性结构的类型、存储上是分散存储；
 2. 表现：每个节点(Node)包含一个元素和一个指向下一个节点的指针(pointer)； 
 3. 特性：插入和删除 --> 只需要修改指针的指向即可；
-        扩容 --> 随时动态的增长或缩小，无需想数组一样预先指定大小；
+        扩容 --> 随时动态的增长或缩小，无需像数组一样预先指定大小；
         查询 --> 需要从头节点开始遍历链表，直到找到目标节点，***访问效率极低***；
         存储大小 --> 需要额外的空间存储下一个节点的指针，相比于数组存储相同的数据元素，需要更多的内存空间； 
 4. 链表的种类：单向链表 --> 头节点、尾节点（指向空None）、每个节点包含值和指向下一个节点的指针；
@@ -219,18 +219,18 @@ class LinkedList:
         # 插入到中间：用推导式range
         else:
             node = self.__head
-            for i in range(index - 1): #找到index-1(也就是插入位置的上一个节点)的node
-                node = node.next #node代表index-1的位置
+            for i in range(index - 1):  # 找到index-1(也就是插入位置的上一个节点)的node
+                node = node.next  # node代表index-1的位置
             # node.next代表index的位置，同时先new Node(item, node.next) 然后再赋值 node.next = Node(item, node.next)，
             # 所以不会出现node.next对应的node丢失的问题;
-            #具体逻辑为：新节点的next执行index位置（node.next）,index-1的节点的next指向新节点
+            # 具体逻辑为：新节点的next执行index位置（node.next）,index-1的节点的next指向新节点
             node.next = Node(item, node.next)
         self.__size += 1
 
     def append(self, item):
-      """末尾追加元素"""
-      ###===self.size正好是尾节点的下一个node的index(神奇的下表index和size)
-      self.insert(self.__size, item)
+        """末尾追加元素"""
+        ###===self.size正好是尾节点的下一个node的index(神奇的下表index和size)
+        self.insert(self.__size, item)
 
     ###===自己写===
     # tmp_index = 0
@@ -247,5 +247,56 @@ class LinkedList:
     #         return True
     ###===自己写===
 
-    for i in range(0):
-        print(i)
+    def remove(self, index):
+        if index < 0 or index > self.__size:
+            raise IndexError("Index out of range")
+        if index == 0:
+            self.__head = self.__head.next
+        else:
+            node = self.__head
+            # 通过推导式找到要删除index的上一个index-1位置的node1节点
+            # 使用node.next.next获取index+1位置的node2节点
+            # 赋值将index-1位置的node1节点next指针指向index+1位置的node2节点
+            # 链表大小减一
+            for i in range(index - 1):
+                node = node.next
+            node.next = node.next.next
+        self.__size -= 1
+
+    def set(self, index, item):
+        """修改的是节点的值，而不是把节点替换掉"""
+        if index < 0 or index > self.__size:
+            raise IndexError("Index out of range")
+        node = self.__head
+        for i in range(index):
+            node = node.next
+        node.data = item
+
+    def get(self, index):
+        """访问元素"""
+        if index < 0 or index > self.__size:
+            raise IndexError("Index out of range")
+
+        node = self.__head
+        for i in range(index):
+            node = node.next
+        return node.data
+
+
+head = Node(1, 2)
+next1 = Node(2, 3)
+next2 = Node(3, 4)
+next3 = Node(4, 5)
+next4 = Node(5, None)
+
+N = LinkedList(head, 5)
+
+head.next = next1
+next1.next = next2
+next2.next = next3
+next3.next = next4
+
+print(head)
+
+# for i in range(0):
+#     print(i)
