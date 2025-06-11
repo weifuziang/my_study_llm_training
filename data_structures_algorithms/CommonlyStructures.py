@@ -12,32 +12,32 @@
 2. 关注点：连续存储、***开始索引或者末尾索引（可以知道任意元素位置）***、数据类型、索引；
 3. 注释：python中，并没有严格意义上的”数组“，用list模拟、array模块的数组、numpy库的ndarray
 
-***数组封装核心***
-1. 初始化：
-    用什么样的存储？ --> list作为核心存储（self.__items=[0]）；
-    数组的初始化容量 --> self.__capacity=8 、 self.__items=[0] * self.__capacity;
-    数组的初始化大小 --> self.size=0
+4. ***数组封装核心***
+    1> 初始化：
+        用什么样的存储？ --> list作为核心存储（self.__items=[0]）；
+        数组的初始化容量 --> self.__capacity=8 、 self.__items=[0] * self.__capacity;
+        数组的初始化大小 --> self.size=0
     
-2. 插入、删除操作
-   主逻辑：挨个移动数组元素，并覆盖
-   插入：逻辑 --> 从末尾索引依次向后移动一位，直到插入索引（index）的位置，则停止移动，并将self.__items[index]=insertValue进行赋值
-        实现 --> for i in range(self.__size,index,-1): self.__items[i]=self.__items[i-1]
+    2> 插入、删除操作：
+        主逻辑：挨个移动数组元素，并覆盖
+        插入：逻辑 --> 从末尾索引依次向后移动一位，直到插入索引（index）的位置，则停止移动，并将self.__items[index]=insertValue进行赋值
+             实现 --> for i in range(self.__size,index,-1): self.__items[i]=self.__items[i-1]
                 self.__size+=1  
                 self.__items[index]=insertValue;
-        注释 --> 由于只有知道开始或者末尾索引才能知道元素的位置,同时在插入的时候也要注意数组的capacity是否够用，若不够用则需要进行数组的扩容；
+             注释 --> 由于只有知道开始或者末尾索引才能知道元素的位置,同时在插入的时候也要注意数组的capacity是否够用，若不够用则需要进行数组的扩容；
         
-   删除：逻辑 --> 从删除索引位置（deleteIndex）开始依次向前移动一位（将删除索引覆盖掉，并将后面的元素都往前移动）
-        实现 --> for i in range(deleteIndex,self.__size,1):self.__items[i]=self.__items[i+1]
+        删除：逻辑 --> 从删除索引位置（deleteIndex）开始依次向前移动一位（将删除索引覆盖掉，并将后面的元素都往前移动）
+             实现 --> for i in range(deleteIndex,self.__size,1):self.__items[i]=self.__items[i+1]
                 self.__size-=1
-3. 扩容
-    主逻辑：创建新的存储（self.new__items=[0]*self.__capacity*2）,将旧存储（self.__items)元素挨个赋值，
+    3> 扩容
+        主逻辑：创建新的存储（self.new__items=[0]*self.__capacity*2）,将旧存储（self.__items)元素挨个赋值，
            然后，将新存储地址赋值给旧存储（self.items=self.new__items）
            最后，数组容量进行真是变更（self.capacity=self.__capacity*2）
            
-    实现：扩容 --> self.new__items=[0]*self.__capacity*2）
-         旧元素迁移 --> for i in range(self.__size): self.new__items[i]=self.__items[i]
-         地址回签 --> self.__items=self.new__items
-         数组容量变更 --> self.capacity=self.__capacity*2
+        实现：扩容 --> self.new__items=[0]*self.__capacity*2）
+             旧元素迁移 --> for i in range(self.__size): self.new__items[i]=self.__items[i]
+             地址回签 --> self.__items=self.new__items
+             数组容量变更 --> self.capacity=self.__capacity*2
            
 
 """
@@ -155,12 +155,14 @@ class Array:
 
 """
 链表（LinkedList）
-1. 特点：逻辑上是线性结构的类型、存储上是分散存储；
-2. 表现：每个节点(Node)包含一个元素和一个指向下一个节点的指针(pointer)； 
-3. 特性：插入和删除 --> 只需要修改指针的指向即可；
+1. 基本概念：逻辑上是线性结构的类型、存储上是分散存储；
+2. 表现形式：每个节点(Node)包含一个元素和一个指向下一个节点的指针(pointer)； 
+3. 关注点：
+        插入和删除 --> 只需要修改指针的指向即可；
         扩容 --> 随时动态的增长或缩小，无需像数组一样预先指定大小；
         查询 --> 需要从头节点开始遍历链表，直到找到目标节点，***访问效率极低***；
         存储大小 --> 需要额外的空间存储下一个节点的指针，相比于数组存储相同的数据元素，需要更多的内存空间； 
+        
 4. 链表的种类：单向链表 --> 头节点、尾节点（指向空None）、每个节点包含值和指向下一个节点的指针；
              环形链表 --> 将单向链表的尾节点指向头节点（首尾相连），其中每个节点都可以视作头节点；
              双向链表 --> 同时记录了两个方向的指针，即指向后继节点（下一个节点）和前驱节点（上一个节点）的指针；
@@ -175,8 +177,8 @@ class Array:
              find(item)#元素位置的查询
              for_each()#遍历列表
 
-6. ***链表的创建***
-    1> 初始化：链表节点类class（Node）、链表head节点（self.__head=None）、链表大小（self.__size=0）
+6. ***链表封装核心***
+    1> 初始化：链表节点类class（Node来存储元素的‘容器’）、链表head节点（self.__head=None）、链表大小（self.__size=0）
     2> 插入和删除：
             逻辑：从链表head节点遍历开始遍历(使用推导式range)，找到插入或者删除节点的前一个节点，然后进行指针操作；
             实现：插入--> node=self.__head 
@@ -344,3 +346,115 @@ class LinkedList:
 # for i in range(0):
 #     print(i)
 
+"""
+栈
+1. 基本概念：一个线性结构;
+2. 表现形式：维护了一个有序的数据列表(有索引)，有栈顶（top）和 栈底（bottom）
+2. 特点：先进后出的原则
+3. 基本功能：size()、is_empty()、push(item)、pop()、peek()#获取栈顶元素但是不弹出
+
+4. ***栈的构建核心***
+    1> 出栈：
+        逻辑：从list最大的索引（self.__size-1）开始出栈，拿到元素后记成临时变量后，
+            将该元素从list中删除，最后将self.__size -1；
+        实现：item = items[self.__size-1]
+             del items[self.__size-1]
+             self.__size -= 1
+             return item
+    
+    2> 入栈：
+    
+
+"""
+
+
+###===栈的实现===
+class Stack:
+    def __init__(self):
+        self.__size = 0
+        self.__items = []
+
+    def size(self):
+        return self.__size
+
+    def is_empty(self):
+        return self.__size == 0
+
+    def push(self, item):
+        self.__items.append(item)
+        self.__size += 1
+
+    def pop(self):
+        if self.is_empty():
+            raise IndexError("Stack is empty")
+        item = self.__items[self.__size - 1]  # 后进入的索引最大，会先出栈，所以从最大所以self.__size-1 开始
+        del self.__items[self.__size - 1]
+        self.__size -= 1 #记得出栈后要把栈的size减一***
+        return item
+
+    def peek(self):
+        if self.is_empty():
+            raise IndexError("Stack is empty")
+        return self.__items[self.__size - 1]
+
+###===栈应用===
+"""
+1）有效括号
+力扣20题https://leetcode.cn/problems/valid-parentheses/description/
+（1）题目描述
+给定一个只包括“(”，“)”，“[”，“]”，“{”，“}”的字符串s，判断字符串是否有效。
+有效字符串需满足：
+	左括号必须用相同类型的右括号闭合。
+	左括号必须以正确的顺序闭合。
+	每个右括号都有一个对应的相同类型的左括号。
+（2）示例
+示例 1：
+输入：s = "()"
+输出：true
+示例 2：
+输入：s = "()[]{}"
+输出：true
+示例 3：
+输入：s = "(]"
+输出：false
+示例 4：
+输入：s = "([])"
+输出：true
+
+解题思路：
+1. 枚举出所有括号的右半边部分，只要遇到就进行栈的push()
+2. 括号的右半边部分，通过match case 进行区分处理，并判断按照顺序pop()的元素是不是对应的括号左半边；
+3. 判断按照顺序pop()的元素都要同时判断stack是不是空了；
+4. 循环判断完之后，进行return的时候也要进行判读一次栈是否为空了；
+
+"""
+class Solution:
+    def isValid(self, s):
+        stack = Stack()
+        for i in s:
+            match i:
+                case "(" | "[" | "{":
+                    stack.push(i)
+                case ")":
+                    if stack.is_empty() or stack.pop() != "(":
+                        return False
+                case "]":
+                    if stack.is_empty() or stack.pop() != "[":
+                        return False
+                case "}":
+                    if stack.is_empty() or stack.pop() != "{":
+                        return False
+
+        #主要需要判断最终栈是不是为空，是为了防止s="()[]{}{"可能返回true
+        return True if stack.is_empty() else False
+
+
+if __name__ == "__main__":
+    Solution = Solution()
+    s="()[]{}{"
+    solution = Solution.isValid(s)
+    print(solution)
+
+    s1="((([[[{{{}}}]]])))"
+    solution = Solution.isValid(s1)
+    print(solution)
