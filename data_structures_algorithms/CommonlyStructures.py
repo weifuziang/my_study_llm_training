@@ -175,6 +175,34 @@ class Array:
              find(item)#元素位置的查询
              for_each()#遍历列表
 
+6. ***链表的创建***
+    1> 初始化：链表节点类class（Node）、链表head节点（self.__head=None）、链表大小（self.__size=0）
+    2> 插入和删除：
+            逻辑：从链表head节点遍历开始遍历(使用推导式range)，找到插入或者删除节点的前一个节点，然后进行指针操作；
+            实现：插入--> node=self.__head 
+                        for i in range(index-1):
+                            node=node.next
+                        node.next = Node(item,node.next)
+                        self.__size+=1
+                删除 --> node=self.__head 
+                        for i in range(index-1):
+                            node=node.next
+                        node.next = Node(item,node.next.next)
+            共同逻辑：使用推导式遍历找到目标位置的前一个node(index-1) ,即
+                    node=self.__head 
+                    for i in range(index-1):
+                        node=node.next
+    3> 修改和访问：
+            逻辑：直接使用推导式range直到目标元素位置index即可
+            实现：node = self.__head
+                 for i in range(index):
+                        node=node.next
+    
+    4> 查找和遍历
+            逻辑：直接操作的是节点元素，而不是给定位置去查找，所以只能使用while的方式遍历
+            实现：node = self.__head
+                 while node:
+                    node=node.next
 """
 
 
@@ -260,7 +288,7 @@ class LinkedList:
             # 链表大小减一
             for i in range(index - 1):
                 node = node.next
-            node.next = node.next.next
+            node.next = node.next
         self.__size -= 1
 
     def set(self, index, item):
@@ -282,21 +310,37 @@ class LinkedList:
             node = node.next
         return node.data
 
+    def find(self, item):
+        node = self.__head
+        # for i in range(self.__size - 1):
+        while node:
+            if node.data == item:
+                return True
+            node = node.next
+        return False
 
-head = Node(1, 2)
-next1 = Node(2, 3)
-next2 = Node(3, 4)
-next3 = Node(4, 5)
-next4 = Node(5, None)
+    def for_each(self):
+        """遍历链表"""
+        node = self.__head
+        while node:
+            print(node.data)
+            node = node.next
 
-N = LinkedList(head, 5)
 
-head.next = next1
-next1.next = next2
-next2.next = next3
-next3.next = next4
+# linkList = LinkedList()
+# linkList.append(1)
+# linkList.append(2)
+# linkList.append(3)
+# linkList.append(4)
+# linkList.append(5)
+#
+# get = linkList.get(1)
+# print(get)
+# find = linkList.find(10)
+# print(find)
+# linkList.for_each()
 
-print(head)
 
 # for i in range(0):
 #     print(i)
+
