@@ -350,11 +350,13 @@ class LinkedList:
 栈
 1. 基本概念：一个线性结构;
 2. 表现形式：维护了一个有序的数据列表(有索引)，有栈顶（top）和 栈底（bottom）
-2. 特点：先进后出的原则
+2. 特点：先进后出的原则(LIFO Last-In-First-Out)
 3. 基本功能：size()、is_empty()、push(item)、pop()、peek()#获取栈顶元素但是不弹出
 
 4. ***栈的构建核心***
-    1> 出栈：
+    1> 初始化：存储容器（self.__items=[]）、栈大小属性（self.__size=0）
+    
+    2> 出栈：
         逻辑：从list最大的索引（self.__size-1）开始出栈，拿到元素后记成临时变量后，
             将该元素从list中删除，最后将self.__size -1；
         实现：item = items[self.__size-1]
@@ -362,7 +364,10 @@ class LinkedList:
              self.__size -= 1
              return item
     
-    2> 入栈：
+    3> 入栈：
+        逻辑：直接使用列表的append(),同时控制self.__size()
+        实现：self.__items.append(item)
+             self.__size += 1
     
 
 """
@@ -389,13 +394,14 @@ class Stack:
             raise IndexError("Stack is empty")
         item = self.__items[self.__size - 1]  # 后进入的索引最大，会先出栈，所以从最大所以self.__size-1 开始
         del self.__items[self.__size - 1]
-        self.__size -= 1 #记得出栈后要把栈的size减一***
+        self.__size -= 1  # 记得出栈后要把栈的size减一***
         return item
 
     def peek(self):
         if self.is_empty():
             raise IndexError("Stack is empty")
         return self.__items[self.__size - 1]
+
 
 ###===栈应用===
 """
@@ -428,6 +434,8 @@ class Stack:
 4. 循环判断完之后，进行return的时候也要进行判读一次栈是否为空了；
 
 """
+
+
 class Solution:
     def isValid(self, s):
         stack = Stack()
@@ -445,16 +453,86 @@ class Solution:
                     if stack.is_empty() or stack.pop() != "{":
                         return False
 
-        #主要需要判断最终栈是不是为空，是为了防止s="()[]{}{"可能返回true
+        # 主要需要判断最终栈是不是为空，是为了防止s="()[]{}{"可能返回true
         return True if stack.is_empty() else False
 
 
-if __name__ == "__main__":
-    Solution = Solution()
-    s="()[]{}{"
-    solution = Solution.isValid(s)
-    print(solution)
+# if __name__ == "__main__":
+#     Solution = Solution()
+#     s="()[]{}{"
+#     solution = Solution.isValid(s)
+#     print(solution)
+#
+#     s1="((([[[{{{}}}]]])))"
+#     solution = Solution.isValid(s1)
+#     print(solution)
+"""
+队列
+1. 基本概念：线性结构；
+2. 表现形式：同样也维护了一个有序的数据列表(链表)，队首、队尾；
+3. 特点：队尾元素的插入、队首元素删除，即先进先出FIFO（First-In-First-Out）
+4. 功能：size() is_empty() push(item) pop() peek()
 
-    s1="((([[[{{{}}}]]])))"
-    solution = Solution.isValid(s1)
-    print(solution)
+5. ***队列构建核心***
+    1> 初始化：队首属性、队尾属性、队大小属性
+       注释：抓住该数据结构的可操作的特征，即队首、队尾、队大小属性
+        
+"""
+
+
+###===队列的实现===
+class Node:
+    def __init__(self, data, next=None):
+        self.data = data
+        self.next = next
+
+
+class Queue:
+    def __init__(self):
+        """
+        初始化
+        """
+        self.__size = 0
+        #始终要知道队首是谁,仅为一个node地址标识，要求随时可以取到
+        self.__head = None
+        #始终要知道队尾是谁，仅为一个node地址标识，要求随时可以取到
+        self.__tail = None
+
+
+    @property
+    def size(self):
+        return self.__size
+
+    def is_empty(self):
+        return self.__size == 0
+
+    def push(self, item):
+
+        node = Node(item)
+        if self.is_empty():
+            self.__head = node
+            self.__tail = node
+        else:
+            self.__tail.next = node #用已经知道的tail，直接追加
+            self.__tail = node #追加完，一定要更显队尾的标识符地址指向新追加的node元素
+        self.__size += 1
+
+        ###===自己的代码===
+        """
+        问题点：1. 需要时刻知道队首和队尾是谁；
+               2. 已经知道了队尾，那在进行入队的实时，可以直接操作self.__tail得这node元素
+        """
+        # if self.is_empty():
+        #     self.__head = Node(item, self.__tail)
+        # node = self.__head
+        # while node:
+        #     node = node.next
+        # node.next = Node(item, self.__tail)
+        # self.__size += 1
+    def pop(self):
+        if self.is_empty():
+            raise IndexError("Queue is empty")
+        head = self.__head
+        self.__head = self.__head.next
+        self.__size -= 1
+        return head.data
