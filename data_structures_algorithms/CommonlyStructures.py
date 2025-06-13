@@ -571,18 +571,34 @@ class HashTable:
         self.__table = [None] * self.__capacity  # 数组存储的结构的初始化
         self.__load_factor = 0.7  # 负载因子（元素个数/数组容量）
 
+    def display(self):
+        """显示哈希表内容"""
+        for i, node in enumerate(self.__table):
+            print(f"索引是{i}",end="")
+            current = node
+            while current:
+                print(current.key,current.value,end="")
+                current = current.next
+            print("None")
+            print()
+
     def __hash(self, key):
         """根据key的hash值计算数组下标的计算"""
         return hash(key) % self.__capacity
 
     def __grow(self):
-        """哈希表的扩容?????"""
+        """哈希表的扩容"""
         self.__capacity *= 2
         self.__table, self.__old_table = [Node] * self.__capacity, self.__table
-        for i in self.__old_table:
-            self.__table.append(i)
-
-        pass
+        #既然创建了新的扩容容器，那么链表的大小也要从0开始，
+        # 最主要的原因是：在扩容的同时，会有并发执行put操作
+        self.__size = 0
+        for node in self.__old_table:
+            current=node
+            while current:
+                self.put(current.key, current.value)
+                current=current.next
+                self.__size += 1
 
     def put(self, key, value):
         """哈希表的写入"""
@@ -605,3 +621,30 @@ class HashTable:
                 current.value = value
             current.next = Node(key, value)
             self.__size += 1
+
+    def remove(self, key):
+        """删除元素"""
+        index = self.__hash(key)
+        current = self.__table[index]
+        #用来区分数组对应下标的链表，到底是不是多个，previous用来代表上一个节点
+        #通过previous有没有node，来区分出来我要删除的node是不是头节点
+        previous = None
+        while current:
+            if key == current.key:
+                if previous:#非头元素
+                    previous.next = current.next
+                else:#头元素
+                    if current.next:
+                        self.__table[index] = current.next
+                    else: self.__table[index] = None
+                self.__size -= 1
+                return True
+            previous = current #用来记录上一个节点
+            current = current.next
+        return False
+
+
+
+
+
+
