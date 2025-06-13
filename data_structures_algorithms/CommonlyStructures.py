@@ -493,11 +493,10 @@ class Queue:
         初始化
         """
         self.__size = 0
-        #始终要知道队首是谁,仅为一个node地址标识，要求随时可以取到
+        # 始终要知道队首是谁,仅为一个node地址标识，要求随时可以取到
         self.__head = None
-        #始终要知道队尾是谁，仅为一个node地址标识，要求随时可以取到
+        # 始终要知道队尾是谁，仅为一个node地址标识，要求随时可以取到
         self.__tail = None
-
 
     @property
     def size(self):
@@ -513,8 +512,8 @@ class Queue:
             self.__head = node
             self.__tail = node
         else:
-            self.__tail.next = node #用已经知道的tail，直接追加
-            self.__tail = node #追加完，一定要更显队尾的标识符地址指向新追加的node元素
+            self.__tail.next = node  # 用已经知道的tail，直接追加
+            self.__tail = node  # 追加完，一定要更显队尾的标识符地址指向新追加的node元素
         self.__size += 1
 
         ###===自己的代码===
@@ -529,10 +528,80 @@ class Queue:
         #     node = node.next
         # node.next = Node(item, self.__tail)
         # self.__size += 1
+
     def pop(self):
+        """出队列"""
         if self.is_empty():
             raise IndexError("Queue is empty")
         head = self.__head
         self.__head = self.__head.next
         self.__size -= 1
         return head.data
+
+    def peek(self):
+        """访问队列首元素"""
+        if self.is_empty():
+            raise IndexError("Queue is empty")
+        return self.__head.data
+
+
+"""
+哈希表
+1. 基本概念：哈希表（hash Table），也叫做散列表，由一系列键值对（key-value）组成
+2. 特点：向哈希表中输入一个key,可以在O(1)的时间内获取对应的value值；
+        通常是根据key来查找value;
+
+3. ***哈希表的创建***
+    1> 为了方式hash()冲突，会选用数组+链表来定义哈希表        
+"""
+
+
+###===哈希表的创建===
+class Node:
+    def __init__(self, key, value, next=None):
+        self.key = key
+        self.value = value
+        self.next = next
+
+
+class HashTable:
+    def __init__(self):
+        self.__size = 0  # 链表大小
+        self.__capacity = 8  # 数组容量大小
+        self.__table = [None] * self.__capacity  # 数组存储的结构的初始化
+        self.__load_factor = 0.7  # 负载因子（元素个数/数组容量）
+
+    def __hash(self, key):
+        """根据key的hash值计算数组下标的计算"""
+        return hash(key) % self.__capacity
+
+    def __grow(self):
+        """哈希表的扩容?????"""
+        self.__capacity *= 2
+        self.__table, self.__old_table = [Node] * self.__capacity, self.__table
+        for i in self.__old_table:
+            self.__table.append(i)
+
+        pass
+
+    def put(self, key, value):
+        """哈希表的写入"""
+        # 判断是否要扩容
+        if self.__size / self.__capacity >= self.__load_factor:
+            self.__grow()
+        # 获取数组索引
+        index = self.__hash(key)
+        # 判断数组中是否有node节点
+        if self.__table[index] is None:
+            self.__table[index] = Node(key, value)
+        else:  # 出现了hash冲突，则进行链式追加
+            current = self.__table[index]  # 获取链表的头节点
+            while current and current.next:  # 链表循环，current.next防止循环到最后一个链表，跳出while循环追加时出现Node.next=node直接报错
+                if current.key == key:
+                    current.value = value
+                    return
+                current = current.next
+            if current.key == key:  # 最后一个链表的key值判断
+                current.value = value
+            current.next = Node(key, value)
+            self.__size += 1
