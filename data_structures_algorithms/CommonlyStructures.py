@@ -471,11 +471,26 @@ class Solution:
 1. 基本概念：线性结构；
 2. 表现形式：同样也维护了一个有序的数据列表(链表)，队首、队尾；
 3. 特点：队尾元素的插入、队首元素删除，即先进先出FIFO（First-In-First-Out）
-4. 功能：size() is_empty() push(item) pop() peek()
+4. 功能：size() is_empty() push(item)#向队尾添加元素 pop()#从队首取元素 peek()#访问队首元素
 
 5. ***队列构建核心***
-    1> 初始化：队首属性、队尾属性、队大小属性
-       注释：抓住该数据结构的可操作的特征，即队首、队尾、队大小属性
+    1>  初始化前：链表Node类的初始化
+        初始化：队首属性、队尾属性、队大小属性
+       注释：抓住该数据结构的可操作的特征来做__init__()方法的初始化，即队首、队尾、队大小属性；
+            展开讲,队列我操作入队列和出队的时候，需要时刻保持知道队首是谁、队尾是谁、队是否还有元素
+    2> push(self,item):
+        逻辑：已经知道队尾是谁，则可以直接操作队尾添加元素，同时，记得再次更新队尾；
+        实现：if self.__size == 0: self.__head = Node(item) self.__tail = Node(item)
+             self.__tail.next=Node(item)
+             self.__tail=Node(item)
+             self.__size +=1
+    3> pop():
+        逻辑：已知队首是谁了，则可以直接操作队首元素，同时，节点再次更新队首元素；
+        实现：if self.__size == 0: raise IndexError("queue is empty")
+             head = self.__head
+             self.__head= self.__head.next
+             self.__size -=1
+             return head
         
 """
 
@@ -548,11 +563,96 @@ class Queue:
 """
 哈希表
 1. 基本概念：哈希表（hash Table），也叫做散列表，由一系列键值对（key-value）组成
-2. 特点：向哈希表中输入一个key,可以在O(1)的时间内获取对应的value值；
+2. 特点：
+        1> 向哈希表中输入一个key,可以在O(1)的时间内获取对应的value值；
         通常是根据key来查找value;
+        2> 为了防止hash()冲突，会选用数组+链表来定义哈希表；
+        3> 常见的哈希算法：除法哈希、乘法哈希、MurmurHash(速度快)、CityHash
+           加密哈希算法：MD5（已被成功攻击）、SHA-1（已被成功攻击）、SHA-2、SHA-3
+           文件完成性检查算法：Adler-32 CRC32 
+        4> hash冲突的解决方法：
+            链式法：也是hash表的解决方法（数组+链表）
+            开放寻址法？？？：当发生hash冲突事根据某种探查策略寻找下一个空槽位。常见的探查策略包括如下，
+                            线性探查、二次探查、双重哈希
+        5> ***负载因子***：
+            哈希表中的元素个数和表容量大小的比例；
+            较小的负载因子可以减少冲突的可能性；
+            较大的负载因子可以提高哈希表的内存利用率
+            通常的负载因子是0.7~0.8
+3. 哈希表功能：
+        size()、is_empty()、put(key,value)、remove(key)、display()、get(key)、for_each()
+             
+            
 
 3. ***哈希表的创建***
-    1> 为了方式hash()冲突，会选用数组+链表来定义哈希表        
+    1> 初始化前：链表的Node类，注意此时的Node的初始化需要存储两个元素即key 和 value
+    2> 初始化：哈希表的大小（self.__size）、
+              哈希表本身的容量（self.__capacity）、
+              存储容器（列表模拟的数组self.__table=[None]*self.__capacity） 
+              负载因子（self.__load_factor）: 决定了何时扩容，因为哈希碰撞，所以不能用self.__capacity单一因素作为评估扩容的指标  
+       注释：哈希表容器大小（capacity）、哈希表大小(size)以及负载因子的关系(load_factor)：
+            先有数据结构的容器大小（空间大小），再有可以装的数据元素的大小（数量装载大小）、
+            最后再有如果出现了空间大小和数据装载大小不匹配的时的评估指标，即负载因子；
+    3> put(key,value):
+        主逻辑：首先要判断是否要扩容；其次，获取key对于的数组索引，如果没有hash索引冲突直接放入；如果出现了hash索引重复，则进行链式操作;
+               链式操作的主要分两种情况，1：插入的是重复的key值，则要对每一个已有的链式节点进行key值判断；
+                                     2：插入的key是不重复的，只需要while循环到链表的尾部直接进行current.next=Node(key,value)赋值 
+        实现：if self.__size/self.__capacity >= self.__load_factor: self.__grow()
+             index = self.__hash(key)
+             current = self.__table[index]
+             if current is not None:
+                self.__table[index] = current
+            else:#哈希冲突
+                if current.key == key: #防止使用while current：出现最坏的循环结果即current=None,此时在执行链表的追加，会直接报错
+                    current.value = value
+                    return
+                else:
+                    while current.next: #出现就坏的结果之后，能正常的执行current.next = Node(key,value)
+
+                        if current.key == key:
+                            current.value = value
+                            return
+                        current = current.next
+                    current.next = Node(key,value)
+                    self.__size += 1
+        注释***：在出现哈希碰撞后，且put的的key值也不是重复的，此时要注意while current 循环完后进行current.next = Node(key,value)赋值时候
+                出现空指针异常；
+    4> grow():
+        主逻辑：创建新的存储容器，并进行容量的double，将旧容器再循环复值给新容器；
+            注意扩容的时候有人在并发的put，此时可以先将self.__size=0,然后再进行新旧容器的搬迁；
+        实现：self.__capacity *=2
+             self.__table, self.__old_table=[None]*self.__capacity, self.__table
+             self.__size=0 #防止有人并行的在写入，所以先置零
+             for node in self.__old_table:
+                while node:
+                    self.put(node.key, node.value)
+                    node=node.next
+                    self.__size += 1
+        注释***：在进行搬家的时候，有人并行put操作；
+                搬家的时候可直接使用put操作，不要自己再写了；
+                
+    5> remove(key):
+        主逻辑：找到的node节点所在的数组索引里是不是只有一个节点，如果不是则需要链式循环查询，但是一旦查询到了，进行删除的时候，
+               需要区分是不是头节点，如果不是头节点，你还需要知道前一个node，
+               所以,需要一个pre=Node的变量来记录前一个node节点
+        实现：index = hash(key)
+             current = self.__table[index]
+             pre=None
+             while current:
+                if current.key == key:
+                    if pre is None: #头节点
+                        current=None
+                    else: #非头节点
+                        pre.next=current.next
+                    self.__size -= 1
+                    return True
+                pre = current #记录前一个节点
+                current = current.next
+             return False       
+                
+                
+                
+              
 """
 
 
@@ -574,12 +674,12 @@ class HashTable:
     def display(self):
         """显示哈希表内容"""
         for i, node in enumerate(self.__table):
-            print(f"索引是{i}",end="")
+            print(f"索引是{i}", end="")
             current = node
             while current:
-                print(current.key,current.value,end="")
+                print(current.key, current.value, end="")
                 current = current.next
-            print("None")
+            print("None")  # 如果什么都没有，则直接返回None
             print()
 
     def __hash(self, key):
@@ -590,14 +690,14 @@ class HashTable:
         """哈希表的扩容"""
         self.__capacity *= 2
         self.__table, self.__old_table = [Node] * self.__capacity, self.__table
-        #既然创建了新的扩容容器，那么链表的大小也要从0开始，
+        # 既然创建了新的扩容容器，那么链表的大小也要从0开始，
         # 最主要的原因是：在扩容的同时，会有并发执行put操作
         self.__size = 0
         for node in self.__old_table:
-            current=node
+            current = node
             while current:
                 self.put(current.key, current.value)
-                current=current.next
+                current = current.next
                 self.__size += 1
 
     def put(self, key, value):
@@ -612,39 +712,53 @@ class HashTable:
             self.__table[index] = Node(key, value)
         else:  # 出现了hash冲突，则进行链式追加
             current = self.__table[index]  # 获取链表的头节点
-            while current and current.next:  # 链表循环，current.next防止循环到最后一个链表，跳出while循环追加时出现Node.next=node直接报错
-                if current.key == key:
-                    current.value = value
-                    return
-                current = current.next
-            if current.key == key:  # 最后一个链表的key值判断
+            # 直接先进行key值的判断，不使用while current：
+            # 进行判断的原因是while current最坏的情况执行完之后是current=None
+            if current.key == key:  # 直接先进行key值的判断，不使用while current：进行判断的原因是while current最坏的情况执行完之后是current=None
                 current.value = value
-            current.next = Node(key, value)
+                return
+            else:
+                while current.next:  # 链表循环，current.next防止循环到最后一个链表，跳出while循环追加时出现Node.next=node直接报错
+                    if current.key == key:
+                        current.value = value
+                        return
+                    current = current.next
+                current.next = Node(key, value)
             self.__size += 1
 
     def remove(self, key):
         """删除元素"""
         index = self.__hash(key)
         current = self.__table[index]
-        #用来区分数组对应下标的链表，到底是不是多个，previous用来代表上一个节点
-        #通过previous有没有node，来区分出来我要删除的node是不是头节点
+        # 用来区分数组对应下标的链表，到底是不是多个，previous用来代表上一个节点
+        # 通过previous有没有node，来区分出来我要删除的node是不是头节点
         previous = None
         while current:
             if key == current.key:
-                if previous:#非头元素
+                if previous:  # 非头元素
                     previous.next = current.next
-                else:#头元素
-                    if current.next:
-                        self.__table[index] = current.next
-                    else: self.__table[index] = None
+                else:  # 头元素:之前单线current.next是None，所以就单独使用了一个else self.__table[index]=None
+                    self.__table[index] = current.next
                 self.__size -= 1
                 return True
-            previous = current #用来记录上一个节点
+            previous = current  # 用来记录上一个节点
             current = current.next
         return False
 
+    def get(self, key):
+        """元素的访问"""
+        index = self.__hash(key)
+        current = self.__table[index]
+        while current:
+            if key == current.key:
+                return current.value
+            current = current.next
+        return None
 
-
-
-
-
+    def for_each(self, func):
+        """遍历"""
+        for node in self.__table:
+            current = node
+            while current:
+                func(current.key, current.value)
+                current = current.next
