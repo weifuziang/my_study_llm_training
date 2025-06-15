@@ -207,126 +207,125 @@ class Array:
                     node=node.next
 """
 
-
 ###===单向链表的创建===
-class Node:
-    def __init__(self, data, next=None):
-        self.data = data
-        self.next = next
-
-
-class LinkedList:
-    def __init__(self):
-        """链表初始化"""
-        self.__head = None
-        self.__size = 0
-
-    def __str__(self):
-        """打印链表"""
-        result = []
-        current = self.__head  # 要从头节点开始
-        while current:
-            result.append(str(current.data))
-            current = current.next
-        return "->".join(result)
-
-    @property  # 大小方法转属性使用
-    def size(self):
-        """获取链表的大小"""
-        return self.__size
-
-    def is_empty(self):
-        """判断链表是否为空"""
-        return self.size == 0
-
-    def insert(self, index, item):
-        """插入node元素"""
-        if index < 0 or index > self.__size:
-            raise IndexError("Index out of range")
-        # 插入到头部： 新建Node --> 将插入元素的next指向head --> 新的Node再赋值给head
-        if index == 0:
-            self.__head = Node(item, self.__head)
-        # 插入到中间：用推导式range
-        else:
-            node = self.__head
-            for i in range(index - 1):  # 找到index-1(也就是插入位置的上一个节点)的node
-                node = node.next  # node代表index-1的位置
-            # node.next代表index的位置，同时先new Node(item, node.next) 然后再赋值 node.next = Node(item, node.next)，
-            # 所以不会出现node.next对应的node丢失的问题;
-            # 具体逻辑为：新节点的next执行index位置（node.next）,index-1的节点的next指向新节点
-            node.next = Node(item, node.next)
-        self.__size += 1
-
-    def append(self, item):
-        """末尾追加元素"""
-        ###===self.size正好是尾节点的下一个node的index(神奇的下表index和size)
-        self.insert(self.__size, item)
-
-    ###===自己写===
-    # tmp_index = 0
-    # current = self.__head
-    # while current:
-    #     if index != tmp_index:
-    #         current = current.next
-    #         tmp_index += 1
-    #     else:
-    #         node = Node(item)
-    #         current_next = current.next
-    #         current.next = node
-    #         node.next = current_next
-    #         return True
-    ###===自己写===
-
-    def remove(self, index):
-        if index < 0 or index > self.__size:
-            raise IndexError("Index out of range")
-        if index == 0:
-            self.__head = self.__head.next
-        else:
-            node = self.__head
-            # 通过推导式找到要删除index的上一个index-1位置的node1节点
-            # 使用node.next.next获取index+1位置的node2节点
-            # 赋值将index-1位置的node1节点next指针指向index+1位置的node2节点
-            # 链表大小减一
-            for i in range(index - 1):
-                node = node.next
-            node.next = node.next
-        self.__size -= 1
-
-    def set(self, index, item):
-        """修改的是节点的值，而不是把节点替换掉"""
-        if index < 0 or index > self.__size:
-            raise IndexError("Index out of range")
-        node = self.__head
-        for i in range(index):
-            node = node.next
-        node.data = item
-
-    def get(self, index):
-        """访问元素"""
-        if index < 0 or index > self.__size:
-            raise IndexError("Index out of range")
-
-        node = self.__head
-        for i in range(index):
-            node = node.next
-        return node.data
-
-    def find(self, item):
-        node = self.__head
-        # for i in range(self.__size - 1):
-        while node:
-            if node.data == item:
-                return True
-            node = node.next
-        return False
-
-    def for_each(self):
-        """遍历链表"""
-        node = self.__head
-        while node:
-            print(node.data)
-            node = node.next
+# class Node:
+#     def __init__(self, data, next=None):
+#         self.data = data
+#         self.next = next
+#
+#
+# class LinkedList:
+#     def __init__(self):
+#         """链表初始化"""
+#         self.__head = None
+#         self.__size = 0
+#
+#     def __str__(self):
+#         """打印链表"""
+#         result = []
+#         current = self.__head  # 要从头节点开始
+#         while current:
+#             result.append(str(current.data))
+#             current = current.next
+#         return "->".join(result)
+#
+#     @property  # 大小方法转属性使用
+#     def size(self):
+#         """获取链表的大小"""
+#         return self.__size
+#
+#     def is_empty(self):
+#         """判断链表是否为空"""
+#         return self.size == 0
+#
+#     def insert(self, index, item):
+#         """插入node元素"""
+#         if index < 0 or index > self.__size:
+#             raise IndexError("Index out of range")
+#         # 插入到头部： 新建Node --> 将插入元素的next指向head --> 新的Node再赋值给head
+#         if index == 0:
+#             self.__head = Node(item, self.__head)
+#         # 插入到中间：用推导式range
+#         else:
+#             node = self.__head
+#             for i in range(index - 1):  # 找到index-1(也就是插入位置的上一个节点)的node
+#                 node = node.next  # node代表index-1的位置
+#             # node.next代表index的位置，同时先new Node(item, node.next) 然后再赋值 node.next = Node(item, node.next)，
+#             # 所以不会出现node.next对应的node丢失的问题;
+#             # 具体逻辑为：新节点的next执行index位置（node.next）,index-1的节点的next指向新节点
+#             node.next = Node(item, node.next)
+#         self.__size += 1
+#
+#     def append(self, item):
+#         """末尾追加元素"""
+#         ###===self.size正好是尾节点的下一个node的index(神奇的下表index和size)
+#         self.insert(self.__size, item)
+#
+#     ###===自己写===
+#     # tmp_index = 0
+#     # current = self.__head
+#     # while current:
+#     #     if index != tmp_index:
+#     #         current = current.next
+#     #         tmp_index += 1
+#     #     else:
+#     #         node = Node(item)
+#     #         current_next = current.next
+#     #         current.next = node
+#     #         node.next = current_next
+#     #         return True
+#     ###===自己写===
+#
+#     def remove(self, index):
+#         if index < 0 or index > self.__size:
+#             raise IndexError("Index out of range")
+#         if index == 0:
+#             self.__head = self.__head.next
+#         else:
+#             node = self.__head
+#             # 通过推导式找到要删除index的上一个index-1位置的node1节点
+#             # 使用node.next.next获取index+1位置的node2节点
+#             # 赋值将index-1位置的node1节点next指针指向index+1位置的node2节点
+#             # 链表大小减一
+#             for i in range(index - 1):
+#                 node = node.next
+#             node.next = node.next
+#         self.__size -= 1
+#
+#     def set(self, index, item):
+#         """修改的是节点的值，而不是把节点替换掉"""
+#         if index < 0 or index > self.__size:
+#             raise IndexError("Index out of range")
+#         node = self.__head
+#         for i in range(index):
+#             node = node.next
+#         node.data = item
+#
+#     def get(self, index):
+#         """访问元素"""
+#         if index < 0 or index > self.__size:
+#             raise IndexError("Index out of range")
+#
+#         node = self.__head
+#         for i in range(index):
+#             node = node.next
+#         return node.data
+#
+#     def find(self, item):
+#         node = self.__head
+#         # for i in range(self.__size - 1):
+#         while node:
+#             if node.data == item:
+#                 return True
+#             node = node.next
+#         return False
+#
+#     def for_each(self):
+#         """遍历链表"""
+#         node = self.__head
+#         while node:
+#             print(node.data)
+#             node = node.next
 
 
 # linkList = LinkedList()
@@ -494,71 +493,69 @@ class Solution:
         
 """
 
-
 ###===队列的实现===
-class Node:
-    def __init__(self, data, next=None):
-        self.data = data
-        self.next = next
-
-
-class Queue:
-    def __init__(self):
-        """
-        初始化
-        """
-        self.__size = 0
-        # 始终要知道队首是谁,仅为一个node地址标识，要求随时可以取到
-        self.__head = None
-        # 始终要知道队尾是谁，仅为一个node地址标识，要求随时可以取到
-        self.__tail = None
-
-    @property
-    def size(self):
-        return self.__size
-
-    def is_empty(self):
-        return self.__size == 0
-
-    def push(self, item):
-
-        node = Node(item)
-        if self.is_empty():
-            self.__head = node
-            self.__tail = node
-        else:
-            self.__tail.next = node  # 用已经知道的tail，直接追加
-            self.__tail = node  # 追加完，一定要更显队尾的标识符地址指向新追加的node元素
-        self.__size += 1
-
-        ###===自己的代码===
-        """
-        问题点：1. 需要时刻知道队首和队尾是谁；
-               2. 已经知道了队尾，那在进行入队的实时，可以直接操作self.__tail得这node元素
-        """
-        # if self.is_empty():
-        #     self.__head = Node(item, self.__tail)
-        # node = self.__head
-        # while node:
-        #     node = node.next
-        # node.next = Node(item, self.__tail)
-        # self.__size += 1
-
-    def pop(self):
-        """出队列"""
-        if self.is_empty():
-            raise IndexError("Queue is empty")
-        head = self.__head
-        self.__head = self.__head.next
-        self.__size -= 1
-        return head.data
-
-    def peek(self):
-        """访问队列首元素"""
-        if self.is_empty():
-            raise IndexError("Queue is empty")
-        return self.__head.data
-
+# class Node:
+#     def __init__(self, data, next=None):
+#         self.data = data
+#         self.next = next
+#
+#
+# class Queue:
+#     def __init__(self):
+#         """
+#         初始化
+#         """
+#         self.__size = 0
+#         # 始终要知道队首是谁,仅为一个node地址标识，要求随时可以取到
+#         self.__head = None
+#         # 始终要知道队尾是谁，仅为一个node地址标识，要求随时可以取到
+#         self.__tail = None
+#
+#     @property
+#     def size(self):
+#         return self.__size
+#
+#     def is_empty(self):
+#         return self.__size == 0
+#
+#     def push(self, item):
+#
+#         node = Node(item)
+#         if self.is_empty():
+#             self.__head = node
+#             self.__tail = node
+#         else:
+#             self.__tail.next = node  # 用已经知道的tail，直接追加
+#             self.__tail = node  # 追加完，一定要更显队尾的标识符地址指向新追加的node元素
+#         self.__size += 1
+#
+#         ###===自己的代码===
+#         """
+#         问题点：1. 需要时刻知道队首和队尾是谁；
+#                2. 已经知道了队尾，那在进行入队的实时，可以直接操作self.__tail得这node元素
+#         """
+#         # if self.is_empty():
+#         #     self.__head = Node(item, self.__tail)
+#         # node = self.__head
+#         # while node:
+#         #     node = node.next
+#         # node.next = Node(item, self.__tail)
+#         # self.__size += 1
+#
+#     def pop(self):
+#         """出队列"""
+#         if self.is_empty():
+#             raise IndexError("Queue is empty")
+#         head = self.__head
+#         self.__head = self.__head.next
+#         self.__size -= 1
+#         return head.data
+#
+#     def peek(self):
+#         """访问队列首元素"""
+#         if self.is_empty():
+#             raise IndexError("Queue is empty")
+#         return self.__head.data
 
 """
 哈希表
@@ -569,7 +566,7 @@ class Queue:
         2> 为了防止hash()冲突，会选用数组+链表来定义哈希表；
         3> 常见的哈希算法：除法哈希、乘法哈希、MurmurHash(速度快)、CityHash
            加密哈希算法：MD5（已被成功攻击）、SHA-1（已被成功攻击）、SHA-2、SHA-3
-           文件完成性检查算法：Adler-32 CRC32 
+           文件完成性检查算法：Adler-32 CRC32
         4> hash冲突的解决方法：
             链式法：也是hash表的解决方法（数组+链表）
             开放寻址法？？？：当发生hash冲突事根据某种探查策略寻找下一个空槽位。常见的探查策略包括如下，
@@ -581,42 +578,45 @@ class Queue:
             通常的负载因子是0.7~0.8
 3. 哈希表功能：
         size()、is_empty()、put(key,value)、remove(key)、display()、get(key)、for_each()
-             
-            
+
+
 
 3. ***哈希表的创建***
     1> 初始化前：链表的Node类，注意此时的Node的初始化需要存储两个元素即key 和 value
     2> 初始化：哈希表的大小（self.__size）、
               哈希表本身的容量（self.__capacity）、
-              存储容器（列表模拟的数组self.__table=[None]*self.__capacity） 
-              负载因子（self.__load_factor）: 决定了何时扩容，因为哈希碰撞，所以不能用self.__capacity单一因素作为评估扩容的指标  
+              存储容器（列表模拟的数组self.__table=[None]*self.__capacity）
+              负载因子（self.__load_factor）: 决定了何时扩容，因为哈希碰撞，所以不能用self.__capacity单一因素作为评估扩容的指标
        注释：哈希表容器大小（capacity）、哈希表大小(size)以及负载因子的关系(load_factor)：
             先有数据结构的容器大小（空间大小），再有可以装的数据元素的大小（数量装载大小）、
             最后再有如果出现了空间大小和数据装载大小不匹配的时的评估指标，即负载因子；
     3> put(key,value):
         主逻辑：首先要判断是否要扩容；其次，获取key对于的数组索引，如果没有hash索引冲突直接放入；如果出现了hash索引重复，则进行链式操作;
                链式操作的主要分两种情况，1：插入的是重复的key值，则要对每一个已有的链式节点进行key值判断；
-                                     2：插入的key是不重复的，只需要while循环到链表的尾部直接进行current.next=Node(key,value)赋值 
+                                     2：插入的key是不重复的，只需要while循环到链表的尾部直接进行current.next=Node(key,value)赋值
         实现：if self.__size/self.__capacity >= self.__load_factor: self.__grow()
              index = self.__hash(key)
              current = self.__table[index]
              if current is not None:
                 self.__table[index] = current
             else:#哈希冲突
-                if current.key == key: #防止使用while current：出现最坏的循环结果即current=None,此时在执行链表的追加，会直接报错
-                    current.value = value
-                    return
-                else:
-                    while current.next: #出现就坏的结果之后，能正常的执行current.next = Node(key,value)
-
+                 # ***此方式可以拿到最后一个节点，但同时要结合 if current1.next: current1 = current1.next
+                 # 避免跳出while循环完之后，current1.next = new_node赋值时的空指针异常；
+                while current:
                         if current.key == key:
                             current.value = value
                             return
-                        current = current.next
+                        # ***此方式就很好的解决了，在"while current:"循环的时候，出现最后一个node对象是None情况
+                        # 很好的防止了跳出while循环完之后，current1.next = new_node赋值时的空指针异常
+                        if not current.next:
+                            break
+                        current=current.next
                     current.next = Node(key,value)
                     self.__size += 1
-        注释***：在出现哈希碰撞后，且put的的key值也不是重复的，此时要注意while current 循环完后进行current.next = Node(key,value)赋值时候
-                出现空指针异常；
+        注意***：在出现哈希碰撞后，该索引位置进行的链式查询，要注意如下：
+                a. "while current"循环完后,在进行追加时current.next = Node(key,value)赋值时候出现空指针异常；
+                b. 修正后如果使用"while current.next",是无法循环拿到最有一个node节点的；
+                c. 最合理的方式是"while current: ...... if current.next: current = current.next"
     4> grow():
         主逻辑：创建新的存储容器，并进行容量的double，将旧容器再循环复值给新容器；
             注意扩容的时候有人在并发的put，此时可以先将self.__size=0,然后再进行新旧容器的搬迁；
@@ -628,9 +628,9 @@ class Queue:
                     self.put(node.key, node.value)
                     node=node.next
                     self.__size += 1
-        注释***：在进行搬家的时候，有人并行put操作；
+        注意***：在进行搬家的时候，有人并行put操作；
                 搬家的时候可直接使用put操作，不要自己再写了；
-                
+
     5> remove(key):
         主逻辑：找到的node节点所在的数组索引里是不是只有一个节点，如果不是则需要链式循环查询，但是一旦查询到了，进行删除的时候，
                需要区分是不是头节点，如果不是头节点，你还需要知道前一个node，
@@ -648,26 +648,26 @@ class Queue:
                     return True
                 pre = current #记录前一个节点
                 current = current.next
-             return False       
-                
-                
-                
-              
+             return False
+        注意：在出现哈希碰撞后，该索引位置进行的链式节点循环查找删除时，要注意如下，
+             a. 头节点的删除和非头节点的删除方式不同；
+             b. 非头节点删除时，需要引入pre（前一个节点）变量存储，才能实现指针操作删除current节点
+                pre.current=current.next.next
 """
 
 
 ###===哈希表的创建===
 class Node:
-    def __init__(self, key, value, next=None):
+    def __init__(self, key, value):
         self.key = key
         self.value = value
-        self.next = next
+        self.next = None
 
 
 class HashTable:
     def __init__(self):
         self.__size = 0  # 链表大小
-        self.__capacity = 8  # 数组容量大小
+        self.__capacity = 2  # 数组容量大小
         self.__table = [None] * self.__capacity  # 数组存储的结构的初始化
         self.__load_factor = 0.7  # 负载因子（元素个数/数组容量）
 
@@ -677,10 +677,10 @@ class HashTable:
             print(f"索引是{i}", end="")
             current = node
             while current:
-                print(current.key, current.value, end="")
+                print(f"({current.key} , {current.value}) -> ", end="")
                 current = current.next
             print("None")  # 如果什么都没有，则直接返回None
-            print()
+        print()
 
     def __hash(self, key):
         """根据key的hash值计算数组下标的计算"""
@@ -689,7 +689,7 @@ class HashTable:
     def __grow(self):
         """哈希表的扩容"""
         self.__capacity *= 2
-        self.__table, self.__old_table = [Node] * self.__capacity, self.__table
+        self.__table, self.__old_table = [None] * self.__capacity, self.__table
         # 既然创建了新的扩容容器，那么链表的大小也要从0开始，
         # 最主要的原因是：在扩容的同时，会有并发执行put操作
         self.__size = 0
@@ -703,28 +703,35 @@ class HashTable:
     def put(self, key, value):
         """哈希表的写入"""
         # 判断是否要扩容
-        if self.__size / self.__capacity >= self.__load_factor:
-            self.__grow()
+        # if self.__size / self.__capacity >= self.__load_factor:
+        # self.__grow()
         # 获取数组索引
         index = self.__hash(key)
+        new_node = Node(key, value)
         # 判断数组中是否有node节点
         if self.__table[index] is None:
-            self.__table[index] = Node(key, value)
-        else:  # 出现了hash冲突，则进行链式追加
+            self.__table[index] = new_node
+        # 出现了hash冲突，则进行链式追加
+        else:
             current = self.__table[index]  # 获取链表的头节点
-            # 直接先进行key值的判断，不使用while current：
-            # 进行判断的原因是while current最坏的情况执行完之后是current=None
-            if current.key == key:  # 直接先进行key值的判断，不使用while current：进行判断的原因是while current最坏的情况执行完之后是current=None
-                current.value = value
-                return
-            else:
-                while current.next:  # 链表循环，current.next防止循环到最后一个链表，跳出while循环追加时出现Node.next=node直接报错
-                    if current.key == key:
-                        current.value = value
-                        return
-                    current = current.next
-                current.next = Node(key, value)
-            self.__size += 1
+            # 此种方式，虽然避免了 current1.next = new_node赋值时的空指针异常；
+            # 但是会出现链式循环无法拿到最后一个节点的判断
+            # while current1  and current1.next:
+
+            # 此方式可以拿到最后一个节点，但同时要结合 if current1.next: current1 = current1.next
+            # 避免跳出while循环完之后，current1.next = new_node赋值时的空指针异常；
+            while current:
+                if current.key == key:
+                    current.value = value
+                    return
+                # 此方式就很好的解决了，在"while current:"循环的时候，出现最后一个node对象是None情况
+                # 很好的防止了跳出while循环完之后，current1.next = new_node赋值时的空指针异常；
+                if not current.next:
+                    break
+                current = current.next
+            # 如果key不存在，则插入到链表尾部
+            current.next = new_node
+        self.__size += 1
 
     def remove(self, key):
         """删除元素"""
@@ -762,3 +769,32 @@ class HashTable:
             while current:
                 func(current.key, current.value)
                 current = current.next
+
+
+if __name__ == "__main__":
+    hs = HashTable()
+    hs.put(1, 10)
+    hs.put(2, 20)
+    hs.put(3, 30)
+    hs.put(4, 40)
+    hs.put(5, 50)
+    hs.put(6, 60)
+    hs.put(7, 70)
+    #哈希表冲突后，添加元素的测试，需要把put方法中的链表扩容注释掉，同时，将链表的容量写成最小
+    hs.put(1, 80)
+    hs.put(7, 90)
+    # hs.put(3, 50)
+
+    # hs.put(4, 40)
+    # hs.put(1, 50)
+    # # 哈希碰撞的链式结构的最有一个节点的修改
+    # hs.put(3, 70)
+    hs.display()
+    # hs.put(4, 40)
+    # hs.put(4, 50)
+    # hs.remove(3)
+    # get = hs.get(1)
+    # print(get)
+    # hs.for_each(print)
+
+
