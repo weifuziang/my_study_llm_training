@@ -655,7 +655,6 @@ class Solution:
                 pre.current=current.next.next
 """
 
-
 ###===哈希表的创建===
 # class Node:
 #     def __init__(self, key, value):
@@ -802,21 +801,108 @@ class Solution:
 1. 基本概念；一系列具有层次关系的节点（Node）组成
 2. 特点：父节点、子节点、根节点、叶节点（位于树的底端，没有子节点的节点）、边（连接两个节点的线段）；
         节点的度：节点的子节点数量；
-        节点的层：从根开始定义起，跟为第一层，根的子节点为第2层，以此类推；
+        节点的层：从根开始定义起，根为第一层，根的子节点为第2层，以此类推；
         节点的深度（向上）：从根节点到该节点所经过的边的数量，根的数量为0；
         节点的高度（向下）：从距离该节点最远的叶节点到该节点所经过的边的数量，所有叶子节点高度为零；
         树的高度：从根节点到最远叶子节点所经过边的数量；
-        注意：高度和深度说的都是边的数量、层指的是节点有几层
+        注意：高度和深度说的都是边的数量、层指的是节点有几层     
 3. 二叉树：每个节点最多只能有两个子节点，两个子节点分别被称为左子节点和右子节点，
             以左节点为根节点的子树成为左子树、右边的成为右子树；
-4. 二叉树的特点：可以使用数组结构存储（增减效率低不是主流）、链表结构存储（）
+4. 二叉树的特点：可以使用数组结构存储（增减效率低不是主流）、链表结构存储（主流）
 5. 常见的二叉树：完全二叉树（最下面一层的节点未被填满，且靠左填充）；
                满二叉树（所有层的节点被完全填满）
                平衡二叉树：任意节点的左右子树高度之差不超过1；
-               二叉搜索树：每个节点的值，大于其左子树中的所有节点值，并且小于有子树中的所有节点值；
+               二叉搜索树（有序）：每个节点的值，大于其左子树中的所有节点值，并且小于右子树中的所有节点值；
+               AVL树：AVL树是一种子平衡的二叉搜索树，插入和删除时会进行旋转操作来保证书的平衡性；
+               红黑树：特殊的二叉搜索树，除了二叉搜索树的要求之外，它还具备以下特点：
+                      每个节点或者是黑色，或者是红色；
+                      根节点是黑色；
+                      每个叶节点都是黑色，这里的叶节点是指空（None）的节点；
+                      红色节点的两个子节点必须是黑色的，即每个叶到根的所有路径上不能有两个连续的红色节点；
+                      从任意一个节点到其每个叶的所有路径上包含相同数目的黑色节点；
+                堆：特定条件的完全二叉树，主要分为两种：
+                    大顶堆： 每个父节点的值都大于等于其子节点的值。根节点为树中的最大值；
+                    小顶堆： 每个父节点的值都小于等于其子节点的值。根节点为树中的最小值；
+                霍夫曼树：最优二叉树，是一种带权路径长度最短的二叉树，常用于数据压缩，它的构建基于字符出现频率的概率；
+                B树：自平衡的多路查找树，不是严格意义上的二叉树，但与二叉树的结构类似，经常用于数据库、文件系统等需要磁盘访问的应用；
+                B+树：是B树的优化版本，它将数据集中存储在叶子节点，并通过链表连接来实现高效的范围查询，并且非叶子节点仅存储索引，提高了磁盘利用率；
                
-3. 功能：
+3. 功能：size() is_empty() search() remove() for_each(func,order)
 
 """
 
+###===二叉树的创建===
+from collections import deque
 
+
+class Node:
+    def __init__(self, data):
+        self.value = data
+        self.left = None
+        self.right = None
+
+
+class BinarySearchTree:
+    """搜索二叉树"""
+
+    def __init__(self):
+        self.__root = None
+        self.__size = 0
+
+    def size(self):
+        return self.__size
+
+    def is_empty(self):
+        return self.__size == 0
+
+    # 直接复制过来的，可以先不用管
+    def print_tree(self):
+        """打印树的结构"""
+
+        # 先得到树层高
+        def get_layer(node):
+            """递归计算树的层数"""
+            if node is None:
+                return 0
+            else:
+                left_depth = get_layer(node.left)
+                right_depth = get_layer(node.right)
+                return max(left_depth, right_depth) + 1
+
+        layer = get_layer(self.__root)
+
+        # 层序遍历并打印
+        queue = deque([(self.__root, 1)])
+        current_level = 1
+        while queue:
+            node, level = queue.popleft()
+            if level > current_level:
+                print()
+                current_level += 1
+            if node:
+                print(f"{node.data:^{20 * layer // 2 ** (level - 1)}}", end="")
+            else:
+                print(f"{"N":^{20 * layer // 2 ** (level - 1)}}", end="")
+            if level < layer:
+                if node:
+                    queue.append((node.left, level + 1))
+                    queue.append((node.right, level + 1))
+                else:
+                    queue.append((None, level + 1))
+                    queue.append((None, level + 1))
+        print()
+
+    def search(self, item):
+        """二叉搜索树查找元素是否存在"""
+        return self.__search_pops(item)[0] is not None
+
+    def __search_pops(self, item):
+        """基础的查找方法，同时返回current 和 parent节点"""
+        current = self.__root
+        parent = None
+        while current:
+            if current.value == item:
+                break  # 跳出循环
+            parent = current
+            current = current.left if current.value < item else current.right
+        return current, parent
