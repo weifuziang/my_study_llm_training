@@ -849,6 +849,7 @@ class BinarySearchTree:
         self.__root = None
         self.__size = 0
 
+    @property
     def size(self):
         return self.__size
 
@@ -904,5 +905,20 @@ class BinarySearchTree:
             if current.value == item:
                 break  # 跳出循环
             parent = current
-            current = current.left if current.value < item else current.right
+            current = current.left if item < current.value else current.right
         return current, parent
+
+    def add(self, item):
+        """二叉搜索树的添加"""
+        new_node = Node(item)
+        if self.is_empty():
+            self.__root = new_node
+        else: #不是空，说明只有两种情况；current存在,和current不存在
+            current, parent = self.__search_pops(item)
+            if current:  # 节点值存在，直接返回
+                return
+            if item < parent: #current不存在，使用父节点进行判断追加
+                parent.left = new_node
+            else:
+                parent.right = new_node
+        self.__size += 1
