@@ -907,18 +907,33 @@ class BinarySearchTree:
             parent = current
             current = current.left if item < current.value else current.right
         return current, parent
-
+    #添加操作，仅仅只有左右节点的添加 或者 存在不动
     def add(self, item):
         """二叉搜索树的添加"""
         new_node = Node(item)
         if self.is_empty():
             self.__root = new_node
-        else: #不是空，说明只有两种情况；current存在,和current不存在
+        else:  # 不是空，说明只有两种情况；current存在,和current不存在
             current, parent = self.__search_pops(item)
             if current:  # 节点值存在，直接返回
                 return
-            if item < parent: #current不存在，使用父节点进行判断追加
+            if item < parent:  # current不存在，使用父节点进行判断追加
                 parent.left = new_node
             else:
                 parent.right = new_node
         self.__size += 1
+    #相对复杂，删除完了要各种倒腾
+    def remove(self, item):
+        """删除节点"""
+        # 找个要删除的节点
+        if self.is_empty():
+            raise IndexError
+        current, parent = self.__search_pops(item)
+        #没有找到
+        if not current:
+            return
+        #找到了
+        #情况1：根节点和叶子节点的删除（头和尾的删除）
+        ##根节点
+
+
