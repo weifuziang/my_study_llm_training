@@ -907,7 +907,8 @@ class BinarySearchTree:
             parent = current
             current = current.left if item < current.value else current.right
         return current, parent
-    #添加操作，仅仅只有左右节点的添加 或者 存在不动
+
+    # 添加操作，仅仅只有左右节点的添加 或者 存在不动
     def add(self, item):
         """二叉搜索树的添加"""
         new_node = Node(item)
@@ -922,18 +923,30 @@ class BinarySearchTree:
             else:
                 parent.right = new_node
         self.__size += 1
-    #相对复杂，删除完了要各种倒腾
+
+    # 相对复杂，删除完了要各种倒腾
     def remove(self, item):
         """删除节点"""
-        # 找个要删除的节点
         if self.is_empty():
             raise IndexError
+        # 查找要删除的节点
         current, parent = self.__search_pops(item)
-        #没有找到
+        # 没有找到
         if not current:
             return
-        #找到了
-        #情况1：根节点和叶子节点的删除（头和尾的删除）
-        ##根节点
+        # 找到了，此时要抓主要矛盾，即被删除节点的情况（没有一个节点，有一个节点，有两个节点），这个大矛盾抓住之后，再同时考虑，每种情况里，有没有父节点
+        # 也就是说删除操作是在，被删除节点本身，被删除节点的子节点，以及被删除节点的父节点 之间进行操作的；
 
+        # 情况1：被删除节点没有一个子节点，即，可以是叶子节点，也有可能是根节点；
+        if not current.left and not current.right:
+            if parent: #有父节点，说明就是叶子节点
+                if parent.left == current:
+                    parent.left = None
+                else:
+                    parent.right = None
+            else: #没有父节点，说明current就是根节点
+                self.__root = None
 
+        # 情况2：被删除节点只有一个子节点，可能为左子节点，也有可能为右子节点；
+
+        # 情况3：被删除节点有两个子节点；
