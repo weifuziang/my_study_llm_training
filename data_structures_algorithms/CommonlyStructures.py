@@ -939,14 +939,53 @@ class BinarySearchTree:
 
         # 情况1：被删除节点没有一个子节点，即，可以是叶子节点，也有可能是根节点；
         if not current.left and not current.right:
-            if parent: #有父节点，说明就是叶子节点
+            if parent:  # 有父节点，说明就是叶子节点
                 if parent.left == current:
                     parent.left = None
                 else:
                     parent.right = None
-            else: #没有父节点，说明current就是根节点
+            else:  # 没有父节点，说明current就是根节点
                 self.__root = None
 
         # 情况2：被删除节点只有一个子节点，可能为左子节点，也有可能为右子节点；
+        if not current.left or not current.right:
+            # 公共代码的提取，总归是需要知道是左右子节点哪个不是None
+            child = current.left if current.left else current.right
+            if parent:#current有父节点
+                if parent.left == current:
+                    parent.left = child
+                else:
+                    parent.right = child
+                # 自己写的
+                # if current.left :
+                #     parent.left = current.left
+                # else:
+                #     parent.right = current.left
+            else: #current就是根节点
+                self.__root = child
 
         # 情况3：被删除节点有两个子节点；
+        else:
+            #找到右子树中最小的那个元素，放到current的位置
+            get_min_node = self.__get_min(current.right)
+            if parent:
+                #巧妙的办法：先记录找到node的data值，然后将其node对象删掉，最后将data值赋值给current的value
+                data = get_min_node.data
+                self.remove(data)
+                #只用用找到的get_min_node对当前current进行赋值
+                current.data = data
+                #此时做了一次最小元素的删除，但是在最终也会做一次self.__size -= 1，所以此时要加1
+                self.__size += 1
+            else:
+                self.__root = get_min_node
+
+        self.__size -= 1
+
+    def __get_min(self,node):
+        """右子树里最小的元素一定是在left的left里，所以while只需要一直current.left就好"""
+        current = node
+        while current.left:
+            current =current.left
+        return current
+
+
