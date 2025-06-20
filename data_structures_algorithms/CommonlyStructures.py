@@ -828,6 +828,14 @@ class Solution:
                 B+树：是B树的优化版本，它将数据集中存储在叶子节点，并通过链表连接来实现高效的范围查询，并且非叶子节点仅存储索引，提高了磁盘利用率；
                
 3. 功能：size() is_empty() search() remove() for_each(func,order)
+4. 遍历：
+    深度优先遍历（dfs）：尽可能的深入到每一个分支，直到不能再深入，然后回溯到上一个节点，继续尝试其他的分支；
+        前序遍历：中左右
+        中序遍历：左中右
+        后序遍历：左右中
+        注释：要看“中”的位置，而且是都是“左到 右”；且中序遍历是有序的；
+    广度优先遍历(bfs)：从起始节点开始，首先访问该节点的所有子节点，然后再访问子节点的子节点，以此类推，逐层访问节点；
+       使用队列实现
 
 """
 
@@ -837,7 +845,7 @@ from collections import deque
 
 class Node:
     def __init__(self, data):
-        self.value = data
+        self.data = data
         self.left = None
         self.right = None
 
@@ -902,10 +910,10 @@ class BinarySearchTree:
         current = self.__root
         parent = None
         while current:
-            if current.value == item:
+            if current.data == item:
                 break  # 跳出循环
             parent = current
-            current = current.left if item < current.value else current.right
+            current = current.left if item < current.data else current.right
         return current, parent
 
     # 添加操作，仅仅只有左右节点的添加 或者 存在不动
@@ -918,7 +926,7 @@ class BinarySearchTree:
             current, parent = self.__search_pops(item)
             if current:  # 节点值存在，直接返回
                 return
-            if item < parent:  # current不存在，使用父节点进行判断追加
+            if item < parent.data:  # current不存在，使用父节点进行判断追加
                 parent.left = new_node
             else:
                 parent.right = new_node
@@ -988,4 +996,65 @@ class BinarySearchTree:
             current =current.left
         return current
 
+    def for_each(self, func, order="inorder"):
+        """
+        :param func: 打印函数：print()
+        :param order: 遍历函数名称
+        :return:
+        """
+        match order:
+            case "inorder": #中序
+                self.__inorder_traversal(func)
+            case "preorder":#前序
+                self.__preoder_traversal(func)
+            case "postorder":#后序
+                self.__postorder_traversal(func)
+            case "levelorder":#广度优先遍历
+                self.__levelorder_traversal(func)
 
+    def __inorder_traversal(self, func):
+        """中序遍历：左中右"""
+        def inorder(node):
+            if node is None: #传进来的node是中间位置的node
+                return
+            inorder(node.left)
+            func(node.data)
+            inorder(node.right)
+        return inorder(self.__root)
+
+    def __preoder_traversal(self, func):
+        """前序遍历：中左右"""
+        def preoder(node):
+            if node is None:  # 传进来的node是中间位置的node
+                return
+            func(node.data)
+            preoder(node.left)
+            preoder(node.right)
+        return preoder(self.__root)
+
+    def __postorder_traversal(self, func):
+        """后序遍历：左右中"""
+        def postorder(node):
+            if node is None:  # 传进来的node是中间位置的node
+                return
+            postorder(node.left)
+            postorder(node.right)
+            func(node.data)
+        return postorder(self.__root)
+
+    def __levelorder_traversal(self, func):
+        pass
+
+
+if __name__ == "__main__":
+    tree = BinarySearchTree()
+    tree.add(11)
+    tree.add(7)
+    tree.add(29)
+    tree.add(3)
+    tree.add(19)
+    tree.add(17)
+    tree.add(23)
+    tree.add(31)
+    tree.print_tree()
+    tree.for_each(print, order="preorder")
