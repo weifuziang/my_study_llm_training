@@ -830,12 +830,22 @@ class Solution:
 3. 功能：size() is_empty() search() remove() for_each(func,order)
 4. 遍历：
     深度优先遍历（dfs）：尽可能的深入到每一个分支，直到不能再深入，然后回溯到上一个节点，继续尝试其他的分支；
-        前序遍历：中左右
+        前序遍历：中左右，
         中序遍历：左中右
         后序遍历：左右中
-        注释：要看“中”的位置，而且是都是“左到 右”；且中序遍历是有序的；
-    广度优先遍历(bfs)：从起始节点开始，首先访问该节点的所有子节点，然后再访问子节点的子节点，以此类推，逐层访问节点；
-       使用队列实现
+        注释：a. 要看“中”的位置，而且是都是“左到 右”；且中序遍历是有序的；
+             b. 遍历本质就是左右子树交替入栈出栈，且开始遍历的位置永远都是***根节点***，所以可以形象的记忆为：
+             入栈前打印父节点（从根开始的前序遍历）、左节点出栈后打印父节点（中序遍历）、右节点出栈后打印父节点（后序遍历）
+             c. 核心遍历本质上就是：左右子树交替递归的操作；
+    广度优先遍历(bfs)：
+        从起始节点开始，首先访问该节点这一层的所有子节点，然后再访问该节点的子节点这一层，以此类推，逐层访问节点；
+        使用队列实现,每访问一个节点，就将该节点的子节点添加进队列中；
+        注意：a. 也就是逐层遍历，且每一层都是从左到右
+             b. ***最核心的遍历逻辑***：
+                1. 利用队列的先进先出，节尾部追加（deque.append()），头部出队(deque.popleft)
+                2. 树的节点的***出栈和入栈***时交替进行的，
+                    eg:左子树的父节点出队之后，要进行的是该父节点的左右子节点先后入队，
+                     紧接着下一轮的while循环是跟上一轮出队的父节点同一层级的其他父节点b出队，然后，就是父节点b的子节点入队；
 
 """
 
@@ -959,7 +969,7 @@ class BinarySearchTree:
         if not current.left or not current.right:
             # 公共代码的提取，总归是需要知道是左右子节点哪个不是None
             child = current.left if current.left else current.right
-            if parent:#current有父节点
+            if parent:  # current有父节点
                 if parent.left == current:
                     parent.left = child
                 else:
@@ -969,31 +979,31 @@ class BinarySearchTree:
                 #     parent.left = current.left
                 # else:
                 #     parent.right = current.left
-            else: #current就是根节点
+            else:  # current就是根节点
                 self.__root = child
 
         # 情况3：被删除节点有两个子节点；
         else:
-            #找到右子树中最小的那个元素，放到current的位置
+            # 找到右子树中最小的那个元素，放到current的位置
             get_min_node = self.__get_min(current.right)
             if parent:
-                #巧妙的办法：先记录找到node的data值，然后将其node对象删掉，最后将data值赋值给current的value
+                # 巧妙的办法：先记录找到node的data值，然后将其node对象删掉，最后将data值赋值给current的value
                 data = get_min_node.data
                 self.remove(data)
-                #只用用找到的get_min_node对当前current进行赋值
+                # 只用用找到的get_min_node对当前current进行赋值
                 current.data = data
-                #此时做了一次最小元素的删除，但是在最终也会做一次self.__size -= 1，所以此时要加1
+                # 此时做了一次最小元素的删除，但是在最终也会做一次self.__size -= 1，所以此时要加1
                 self.__size += 1
             else:
                 self.__root = get_min_node
 
         self.__size -= 1
 
-    def __get_min(self,node):
+    def __get_min(self, node):
         """右子树里最小的元素一定是在left的left里，所以while只需要一直current.left就好"""
         current = node
         while current.left:
-            current =current.left
+            current = current.left
         return current
 
     def for_each(self, func, order="inorder"):
@@ -1003,47 +1013,98 @@ class BinarySearchTree:
         :return:
         """
         match order:
-            case "inorder": #中序
+            case "inorder":  # 中序
                 self.__inorder_traversal(func)
-            case "preorder":#前序
+            case "preorder":  # 前序
                 self.__preoder_traversal(func)
-            case "postorder":#后序
+            case "postorder":  # 后序
                 self.__postorder_traversal(func)
-            case "levelorder":#广度优先遍历
+            case "levelorder":  # 广度优先遍历
                 self.__levelorder_traversal(func)
 
     def __inorder_traversal(self, func):
-        """中序遍历：左中右"""
+        """深度优先搜索的中序遍历：左中右"""
+
         def inorder(node):
-            if node is None: #传进来的node是中间位置的node
+            if node is None:  # 传进来的node是中间位置的node
                 return
+            # 打印操作发生在出栈（left出栈）时：
             inorder(node.left)
-            func(node.data)
+            func(node.data)  # node.left开始出栈之后，逐个打印，所以就是叶子节点到根节点的方向打印
             inorder(node.right)
+
         return inorder(self.__root)
 
     def __preoder_traversal(self, func):
-        """前序遍历：中左右"""
+        """深度优先搜索的前序遍历：中左右"""
+
         def preoder(node):
             if node is None:  # 传进来的node是中间位置的node
                 return
+            # 打印操作发生在入栈（middle入栈）时；
+            # 方法入栈之前就打印，所以就是从根节点到叶子节点的方向打印
             func(node.data)
             preoder(node.left)
+            # func(node.data)
             preoder(node.right)
+
         return preoder(self.__root)
 
     def __postorder_traversal(self, func):
-        """后序遍历：左右中"""
+        """深度优先搜索的后序遍历：左右中"""
+
         def postorder(node):
             if node is None:  # 传进来的node是中间位置的node
                 return
+            # 打印操作发生在入栈（right出栈）时；
+            # 左子节点先全部入栈，直到none is None，此时左子节点从叶子节点开始出栈；
             postorder(node.left)
+            # 等左子节点出栈了第一个之后，postorder(node.right)就被执行了，此时就开始了，postorder(node.right)入栈，
+            # 等到postorder(node.right)遇到node is None，此时就开始出栈，出栈的第一个元素 实际上是node is None的父节点；
             postorder(node.right)
             func(node.data)
+
         return postorder(self.__root)
 
     def __levelorder_traversal(self, func):
-        pass
+        """广度优先遍历
+        最核心的遍历逻辑：
+        1. 利用队列的先进先出，节尾部追加（deque.append()），头部出队(deque.popleft)
+        2. 树的节点的***出栈和入栈***时交替进行的，
+            eg:左子树的父节点出队之后，要进行的是该父节点的左右子节点先后入队，
+            紧接着下一轮的while循环是跟上一轮出队的父节点同一层级的其他父节点b出队，然后，就是父节点b的子节点入队；
+        """
+
+        # 双端队列：支持在队列的头部和尾部快速插入和删除元素（时间复杂度O(1)）
+        from collections import deque
+        # 队列初始化
+        deque = deque()
+        # 先进行根节点的入栈
+        deque.append(self.__root)
+        while deque:
+            node = deque.popleft()
+            # 从队列的头部开始打印
+            func(node.data)
+            # 树的父节点打印了出来之后，则开始对父节点的所有子节点进行入栈操作
+            # 先判断left节点就是为了层级遍历的时候是从左往右
+            if node.left:
+                deque.append(node.left)
+            if node.right:
+                deque.append(node.right)
+
+    def f(self, n):
+        """斐波那契数列 加速对递归的理解
+        其中n代表第n个数
+        斐波那契数列：1 1 2 3 5 8 13 21 34 55 85
+        """
+        print(f"当前n值是: {n}")
+        # 终止条件
+        # 当是第0个数字 应该返回0
+        if (n == 0): return 0
+        # 当是第1个位置，也应该是1
+        if (n == 1): return 1
+        # 推到公式如下：相邻两数相加
+        return self.f(n - 1) + self.f(n - 2)
 
 
 if __name__ == "__main__":
@@ -1052,9 +1113,26 @@ if __name__ == "__main__":
     tree.add(7)
     tree.add(29)
     tree.add(3)
+    tree.add(2)
+    tree.add(1)
+    tree.add(2.5)
+    tree.add(5)
+    tree.add(9)
+    tree.add(8)
+    tree.add(10)
     tree.add(19)
     tree.add(17)
     tree.add(23)
     tree.add(31)
+    # 打印整个树
+    print("\n ============================== \n")
     tree.print_tree()
-    tree.for_each(print, order="preorder")
+    print("\n ============================== \n")
+    # 深度优先遍历
+    # tree.for_each(print, order="postorder")
+
+    # 额外插入对递归的理解
+    # print(tree.f(2))
+
+    # 广度优先遍历
+    tree.for_each(print, order="levelorder")
