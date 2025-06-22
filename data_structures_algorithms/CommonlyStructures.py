@@ -1107,32 +1107,53 @@ class BinarySearchTree:
         return self.f(n - 1) + self.f(n - 2)
 
 
-if __name__ == "__main__":
-    tree = BinarySearchTree()
-    tree.add(11)
-    tree.add(7)
-    tree.add(29)
-    tree.add(3)
-    tree.add(2)
-    tree.add(1)
-    tree.add(2.5)
-    tree.add(5)
-    tree.add(9)
-    tree.add(8)
-    tree.add(10)
-    tree.add(19)
-    tree.add(17)
-    tree.add(23)
-    tree.add(31)
-    # 打印整个树
-    print("\n ============================== \n")
-    tree.print_tree()
-    print("\n ============================== \n")
-    # 深度优先遍历
-    # tree.for_each(print, order="postorder")
+# if __name__ == "__main__":
+#     tree = BinarySearchTree()
+#     tree.add(11)
+#     tree.add(7)
+#     tree.add(29)
+#     tree.add(3)
+#     tree.add(2)
+#     tree.add(1)
+#     tree.add(2.5)
+#     tree.add(5)
+#     tree.add(9)
+#     tree.add(8)
+#     tree.add(10)
+#     tree.add(19)
+#     tree.add(17)
+#     tree.add(23)
+#     tree.add(31)
+#     # 打印整个树
+#     print("\n ============================== \n")
+#     tree.print_tree()
+#     print("\n ============================== \n")
+#     # 深度优先遍历
+#     # tree.for_each(print, order="postorder")
+#
+#     # 额外插入对递归的理解
+#     # print(tree.f(2))
+#
+#     # 广度优先遍历
+#     tree.for_each(print, order="levelorder")
 
-    # 额外插入对递归的理解
-    # print(tree.f(2))
+"""
+图
+注：知识的继承和拓展：线性结构（一对一）、树结构（一对多）、图结构（多对多）；
 
-    # 广度优先遍历
-    tree.for_each(print, order="levelorder")
+1. 基本概念：图是比树根普遍的结构，可以认为树是一种特殊的图，其特点相对于树来讲，
+   树只有一个前驱节点（父节点），一个或者两个后驱节点（子节点），也就是一对多，而***图是多对多的关系***；
+2. 特点：由节点和边组成，且是多对多的关系；
+        常见术语：节点、边、权重、邻接、度、路径、环
+3. 图的分类：
+    a. 有向图和无向图：有向图，边是单向的；无向图，边是双向的；
+    b. 连通图和非连通图：连通图，从某个节点出发，可以到达其余任意节点；非连通图，从某个节点出发，有节点不可到达；
+4. 图的常用表示法：
+    邻接矩阵：用n x n的矩阵来表示有n个节点之间的关系，具体看图 ，适合存储稠密图；
+    
+    邻接表：邻接表存储n个链表、列表或其他容器，每个容器存储该节点的所有邻接节点。邻接表适合存储稀疏图 具体看图，适合存储稀疏图；
+5. 图的遍历：
+    广度优先搜索：类比于树的的搜索
+    深度优先搜索：类比于树的搜索  
+    
+"""
