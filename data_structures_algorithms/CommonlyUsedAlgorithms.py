@@ -105,7 +105,7 @@ def select_sort(nums):
             # 如果发现j元素要小于min_index则进行min_index的重新复制
             if nums[j] <= nums[min_index]:
                 min_index = j
-            # 本轮循环完，做真实元素的交换
+        # 本轮循环完，做真实元素的交换
         nums[i], nums[min_index] = nums[min_index], nums[i]
 
 
@@ -138,7 +138,7 @@ def insert_sort(nums):
         for j in range(i, 0, -1):
             # 如果，待排序元素，比有序空间里的元素大，则break，即不进行交换
             if nums[j] >= nums[j - 1]:
-                break
+                break #排过序的就不再循环了
             # 如果，待排序元素，比有序空间里的元素小，则进行交换
             nums[j], nums[j - 1] = nums[j - 1], nums[j]
 
@@ -146,15 +146,20 @@ def insert_sort(nums):
 """
 归并排序：
     1. 思路：
-     向将一个数组，递归的分割成无数个数组，然后再将数组通过合并两个有序的函数，递归合并
-     将两个有序的列表，取各自最小的元素进行比较，每次都将两者中最小的一个，移到临时数组中；
+     拆分：先将一个数组，递归的分割成无数个数组，然后再将数组通过合并两个有序的函数，递归合并
+     合并：将两个有序的列表，取各自最小的元素进行比较，每次都将两者中最小的一个，移到临时数组中；
     
-    2. 
+    2. 重点思路：
+    拆分时，会有左右两个子递归，左右两个子递归代表了两组入栈和出栈，而且者两组出入栈是先后执行的，
+    也就是说，当左边的子递归先完成了递送和回归的操作得到一个结果A，然后，再进行右边的子递归的递送和回归
+    操作后，得到一个结果B，最后再一起处理结果A和结果B；
+    
+    debug一下，查看一下整个的递归过程
 
 """
 
 #归并
-def merge_sort(left, right):
+def merge(left, right):
     """归并排序：合并两个有序的数组，且是从小到大的"""
     nums = []
     i = j = 0
@@ -170,5 +175,17 @@ def merge_sort(left, right):
     return nums
 
 #拆分+调用归并
-def mergesort(nums):
-    pass
+def merge_sort(nums):
+    if len(nums) <= 1:
+        return nums
+    #递归分割数组
+    mid = len(nums) // 2
+    left = merge_sort(nums[:mid])
+    right =merge_sort(nums[mid:])
+
+    #合并已排序的子数组
+    return merge(left, right)
+
+if __name__ == '__main__':
+    nums = [1,7,4,9,5,10,2,30,15,0,2]
+    print(merge_sort(nums))
