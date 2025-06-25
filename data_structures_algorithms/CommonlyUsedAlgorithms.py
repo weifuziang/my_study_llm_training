@@ -1,6 +1,7 @@
 """
 常用的算法
 """
+from http.cookiejar import lwp_cookie_str
 
 """
 查找类算法-二分查找
@@ -138,7 +139,7 @@ def insert_sort(nums):
         for j in range(i, 0, -1):
             # 如果，待排序元素，比有序空间里的元素大，则break，即不进行交换
             if nums[j] >= nums[j - 1]:
-                break #排过序的就不再循环了
+                break  # 排过序的就不再循环了
             # 如果，待排序元素，比有序空间里的元素小，则进行交换
             nums[j], nums[j - 1] = nums[j - 1], nums[j]
 
@@ -155,10 +156,18 @@ def insert_sort(nums):
     操作后，得到一个结果B，最后再一起处理结果A和结果B；
     
     debug一下，查看一下整个的递归过程
+    
+    3. 复杂度：
+    时间复杂度：O(nlogn),
+              x该算法的时间复杂度，主要取决于合并操作的循环次数,由于该算法用到了递归，故计算循环次数时，还需要考虑递归调用的总次数
+              递归的过程就是二叉树和拆分和循环遍历，即时间复杂度为 树的层数logn * 每层的遍历次数n 
+    空间复杂度：O(n),该算法在运行时，同一时刻只会有一个临时数组，所有只需考虑最大的临时数组占用的空间即可，
+             显然临时数组的最大长度等于输入数组的长度。因此该算法的空间复杂度为O(n)
 
 """
 
-#归并
+
+# 归并
 def merge(left, right):
     """归并排序：合并两个有序的数组，且是从小到大的"""
     nums = []
@@ -174,18 +183,60 @@ def merge(left, right):
     nums += right[j:]
     return nums
 
-#拆分+调用归并
+
+# 拆分+调用归并
 def merge_sort(nums):
     if len(nums) <= 1:
         return nums
-    #递归分割数组
+    # 递归分割数组
     mid = len(nums) // 2
     left = merge_sort(nums[:mid])
-    right =merge_sort(nums[mid:])
+    right = merge_sort(nums[mid:])
 
-    #合并已排序的子数组
+    # 合并已排序的子数组
     return merge(left, right)
 
+
+# if __name__ == '__main__':
+#     nums = [1,7,4,9,5,10,2,30,15,0,2]
+#     print(merge_sort(nums))
+
+"""
+快速排序
+    1. 基本原理：
+        a. 依次按基准元素划分；
+        b. 小于基准的放到左边，大于的放到右边；
+        c. 左右双指针进行操作：先从右指针开始，因为你的基准是从左边拿去的
+    
+    
+
+
+"""
+
+
+def partition(nums, left, right):
+    pivot = nums[left]
+    while left < right:
+        while left < right and nums[right] >= pivot:
+            right -= 1
+        # 左右交换：不会出现数据丢失，因为left已经被放到基准里了；
+        nums[left] = nums[right]
+        while left < right and nums[left] <= pivot:
+            left += 1
+        # 左右交换：不会出现数据丢失，因为left已经被放到基准里了；
+        nums[right] = nums[left]
+    nums[left] = pivot
+    #返回最终基准线的位置
+    return left
+
+def quickSort(nums, left, right):
+    if left < right:
+        mid = partition(nums, left, right)
+        quickSort(nums, left, mid - 1)
+        quickSort(nums, mid + 1, right)
+
 if __name__ == '__main__':
-    nums = [1,7,4,9,5,10,2,30,15,0,2]
-    print(merge_sort(nums))
+    nums = [9, 4, 8, 6, 7]
+    quickSort(nums, 0, len(nums) - 1)
+    print(nums)
+
