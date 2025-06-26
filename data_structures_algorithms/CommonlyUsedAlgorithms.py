@@ -206,9 +206,18 @@ def merge_sort(nums):
     1. 基本原理：
         a. 依次按基准元素划分；
         b. 小于基准的放到左边，大于的放到右边；
-        c. 左右双指针进行操作：先从右指针开始，因为你的基准是从左边拿去的
+        c. 左右双指针进行操作：先从右指针开始，因为你基准的开始是从左边拿的
     
+    2. 核心思路：
+       a. 初始基准元素直接用最左边了；
+       b. 每一轮结束都需要把基准元素最终落到的那个索引返回；
+       c. 为什么要用调用两次递归函数呢？原因是，上一轮返回的基准元素的索引mid，要进行下一轮循环时，如果只递归调用一次函数，
+          那你到底是用left 还是用right呢？
+       d. ***巧妙的一个点就是：在进行以基准元素为基准进行比较时，一般都是右边元素while比较，出现一个交换操作后，就进行左边元素的while比较；
+                            是左右轮训，因为这样可以很好的记录和利用被交换元素之前的位置****；
     
+    3. 时间复杂度：O(nlogn)
+       空间复杂度：O(n)        
 
 
 """
@@ -226,17 +235,77 @@ def partition(nums, left, right):
         # 左右交换：不会出现数据丢失，因为left已经被放到基准里了；
         nums[right] = nums[left]
     nums[left] = pivot
-    #返回最终基准线的位置
+    # 返回最终基准线的位置
     return left
+
 
 def quickSort(nums, left, right):
     if left < right:
         mid = partition(nums, left, right)
+        # 递归函数第一次调用
         quickSort(nums, left, mid - 1)
+        # 递归函数第二次调用
         quickSort(nums, mid + 1, right)
 
-if __name__ == '__main__':
-    nums = [9, 4, 8, 6, 7]
-    quickSort(nums, 0, len(nums) - 1)
-    print(nums)
 
+# if __name__ == '__main__':
+#     nums = [9, 4, 8, 6, 7,10,2,4,12,8,6,2,5,16,1]
+#     quickSort(nums, 0, len(nums) - 1)
+#     print(nums)
+
+"""
+堆排序
+    1. 基本思路如下，
+       a. 构建大顶堆: 自底向上依次堆化（从非叶子节点开始，而非叶子节点的计算： 数组长度为n,最后一个非叶子节点的索引为(n//2) - 1 ）
+       b. 交换堆顶和堆底元素: 交换后大顶堆结构被破坏
+       c. 重新调整堆(重新堆化)：自顶向下堆化
+       d. 重复上面b，c的步骤;
+    
+    2. 总结：
+       a. 大顶堆以数组形式的存储实际上就是广度优先遍历的顺序存储；
+       b. 构建大顶堆时，非叶子节点的索引计算是，按照大顶堆首次以数组形式存储时的(n//2) - 1
+       c. 无论是自底向上依次堆化，还是自顶向下的的堆化，其实都是一次对堆的根节点、左节点以及有节点的大小比较，将最大的元素放到根节点而已；
+       
+
+
+"""
+
+
+def heapify(nums, n, i):
+    """
+    此方法本身就是自顶向下的堆化，因为递归调用了heapify
+    :param nums: 列表或者数组
+    :param n: 堆内的元素个数
+    :param i: 开始堆化的索引
+    :return:
+    """
+    # 假设i最大
+    largest = i
+    left = 2 * i + 1
+    right = 2 * i + 2
+    if left < n and nums[left] > nums[largest]:
+        largest = left
+    if right < n and nums[right] > nums[largest]:
+        largest = right
+    if largest != i:
+        nums[largest], nums[i] = nums[i], nums[largest]
+        heapify(nums, n, largest)
+
+def heapSort(nums):
+    n = len(nums)
+    #构建大顶堆，从最后一个非叶子节点（n//2 - 1），逐个递减
+    #此range()的递减循环就是自底向上的堆化 其实每次循环只调用了一次heapify()函数，即无递归
+    # 堆的数组化存储中，堆靠近底部的元素会存在数组的最靠后的位置）
+    # 问题点 range的最后落脚索引是 -1 ，是因为可以递归到0 ， 即 2 * 0 +1  ；2*0+2
+    for i in range(n // 2 - 1, -1, -1):
+        heapify(nums, n, i)
+    #依次交换堆顶和堆底元素
+    for i in range(n - 1, 0, -1):
+        nums[i], nums[0] = nums[0], nums[i]
+        #被破坏后的堆，自顶向下堆化构建，会多次递归调用
+        heapify(nums, i, 0)
+    return nums
+
+if __name__ == '__main__':
+    nums = [5, 4, 3,10,11,22,7,6, 2, 1]
+    print(heapSort(nums))
