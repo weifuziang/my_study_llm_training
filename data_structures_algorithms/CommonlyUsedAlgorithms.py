@@ -1,7 +1,7 @@
 """
 常用的算法
 """
-from http.cookiejar import lwp_cookie_str
+# from http.cookiejar import lwp_cookie_str
 
 """
 查找类算法-二分查找
@@ -217,7 +217,7 @@ def merge_sort(nums):
                             是左右轮训，因为这样可以很好的记录和利用被交换元素之前的位置****；
     
     3. 时间复杂度：O(nlogn)
-       空间复杂度：O(n)        
+       空间复杂度：O(logn) ~ O(n)       
 
 
 """
@@ -260,8 +260,13 @@ def quickSort(nums, left, right):
        b. 交换堆顶和堆底元素: 交换后大顶堆结构被破坏
        c. 重新调整堆(重新堆化)：自顶向下堆化
        d. 重复上面b，c的步骤;
+       
+    2. 复杂度
+        时间复杂度：O(nlogn)，与其他O(nlogn)的排序算法（归并、快排）对比，堆排序的常数因子比较大，因此在某些情况喜爱效率比较低；
+        空间复杂度：O(1) 
     
-    2. 总结：
+    
+    3. 总结：
        a. 大顶堆以数组形式的存储实际上就是广度优先遍历的顺序存储；
        b. 构建大顶堆时，非叶子节点的索引计算是，按照大顶堆首次以数组形式存储时的(n//2) - 1
        c. 无论是自底向上依次堆化，还是自顶向下的的堆化，其实都是一次对堆的根节点、左节点以及有节点的大小比较，将最大的元素放到根节点而已；
@@ -273,7 +278,7 @@ def quickSort(nums, left, right):
 
 def heapify(nums, n, i):
     """
-    此方法本身就是自顶向下的堆化，因为递归调用了heapify
+    此方法本身就是自顶向下的堆化，因为会递归调用heapify
     :param nums: 列表或者数组
     :param n: 堆内的元素个数
     :param i: 开始堆化的索引
@@ -281,31 +286,150 @@ def heapify(nums, n, i):
     """
     # 假设i最大
     largest = i
+    # 拿到左子节点的索引
     left = 2 * i + 1
+    # 拿到右子节点的索引
     right = 2 * i + 2
+    # 中、左、右节点的大小比较，即堆化的过程
     if left < n and nums[left] > nums[largest]:
         largest = left
     if right < n and nums[right] > nums[largest]:
         largest = right
+    # 判读largest发生了变化后
     if largest != i:
         nums[largest], nums[i] = nums[i], nums[largest]
         heapify(nums, n, largest)
 
+
 def heapSort(nums):
     n = len(nums)
-    #构建大顶堆，从最后一个非叶子节点（n//2 - 1），逐个递减
-    #此range()的递减循环就是自底向上的堆化 其实每次循环只调用了一次heapify()函数，即无递归
+    # 构建大顶堆，从最后一个非叶子节点（n//2 - 1），逐个递减
+    # 此range()的递减循环就是自底向上的堆化 其实每次循环只调用了一次heapify()函数，即无递归
     # 堆的数组化存储中，堆靠近底部的元素会存在数组的最靠后的位置）
     # 问题点 range的最后落脚索引是 -1 ，是因为可以递归到0 ， 即 2 * 0 +1  ；2*0+2
     for i in range(n // 2 - 1, -1, -1):
         heapify(nums, n, i)
-    #依次交换堆顶和堆底元素
+    # 依次交换堆顶和堆底元素
     for i in range(n - 1, 0, -1):
         nums[i], nums[0] = nums[0], nums[i]
-        #被破坏后的堆，自顶向下堆化构建，会多次递归调用
+        # 被破坏后的堆，自顶向下堆化构建，会多次递归调用
         heapify(nums, i, 0)
     return nums
 
-if __name__ == '__main__':
-    nums = [5, 4, 3,10,11,22,7,6, 2, 1]
-    print(heapSort(nums))
+
+# if __name__ == '__main__':
+#     nums = [5, 4, 3, 10, 11, 22, 7, 6, 2, 1]
+#     print(heapSort(nums))
+
+"""
+分治算法：
+    1. 基本思路： 将原问题递归的分解为若干个规模较小、相互独立切性质相同的子问题，直到子问题足够的简单，简单到可以直接求解，然后再返回结果逐个解决上层问题；
+                 操作过程为：可分解  --> 存在基本情况  --> 可合并
+    2. 连通性：归并排序 和 快速排序算法就是分治思想的典型应用
+"""
+# 汉诺塔问题（ 作为简单了解）
+"""
+f(n-1): 
+        a. 将source的n-1个元素 平移到缓冲区buffer，其间会借助于target； 
+        b. 将缓冲区buffer的之前移动过来的n-1元素，平移到target；
+        
+f(n): 将source移走n-1个元素剩下的元素n,全部移动到target
+  
+"""
+
+
+def print_abc():
+    """打印3个柱子"""
+    print("a:", a)
+    print("b:", b)
+    print("c:", c)
+    print()
+
+
+def hanota(n, source, target, buffer):
+    # 只有一个盘子时，直接从源柱子移动到目标柱子
+    if n == 1:
+        target.append(source.pop())
+        return
+
+    # 1. 将 n-1 个盘子从源柱子移动到缓冲柱子
+    hanota(n - 1, source, buffer, target)
+    print_abc()
+
+    # 2. 将第 n 个盘子从源柱子移动到目标柱子
+    hanota(1, source, target, buffer)
+    print_abc()
+
+    # 3. 将 n-1 个盘子从缓冲柱子移动到目标柱子
+    hanota(n - 1, buffer, target, source)
+    print_abc()
+
+
+# if __name__ == "__main__":
+#     n = 3
+#     a = list(range(n, 0, -1))
+#     b = []
+#     c = []
+#     hanota(n, a, c, b)
+
+#Karatsuba（卡拉楚巴） （作为简单了解）
+"""
+Karatsuba（卡拉楚巴）大整数乘法算法  
+    1. 基本原理： 一种高效的大整数乘法算法，关键思想是通过分治法减少了传统乘法的计算量，从而降低了***乘法的时间复杂度
+    
+    2. 基本公式
+        a. 表达式：A×B --> C = A×B = (10m×A1+A0)×(10m×B1+B0) = 102m×A1×B1 + 10m×(A1×B0+A0×B1) + A0×B0
+        b. 抽象：
+            A1×B1：高位部分的乘积。
+            A0×B0：低位部分的乘积
+            A1×B0+A0×B1：混合部分，涉及到高位与低位的交叉乘积。
+    
+        c. 程序化
+            令z0=A0×B0
+            令z1=(A1+A0)×(B1+B0) 
+            令z2= A1×B1
+            此时结果C=102m× z2 + 10m×(z1−z2−z0) + z0
+            
+    3. 高效优化的点：
+            Karatsuba通过减少了1个乘法操作，将原本的4次乘法运算变成了3次乘法运算，时间复杂度：T(n)=3T(n2)+O(n)，O(nlog3)≈O(n1.585)
+    
+
+"""
+
+
+def karatsuba(x, y):
+    """卡拉楚巴算法"""
+    # 将 x 和 y 转换为字符串
+    x_str, y_str = str(x), str(y)
+    n = max(len(x_str), len(y_str))
+
+    # 如果存在负数，将其转换为正数再调用 karatsuba
+    if x_str[0] == "-":
+        return -karatsuba(-x, y)
+    if y_str[0] == "-":
+        return -karatsuba(x, -y)
+
+    # 如果只剩1位则返回乘积
+    if n == 1:
+        return x * y
+
+    # 确保数字长度一致
+    x_str = x_str.zfill(n)
+    y_str = y_str.zfill(n)
+
+    # 计算分割点
+    m = n // 2
+
+    # 将数字划分为高位部分和低位部分
+    high1, low1 = int(x_str[:-m]), int(x_str[-m:])
+    high2, low2 = int(y_str[:-m]), int(y_str[-m:])
+
+    # 递归调用 karatsuba
+    z0 = karatsuba(low1, low2)
+    z1 = karatsuba(low1 + high1, low2 + high2)
+    z2 = karatsuba(high1, high2)
+
+    return pow(10, 2 * m) * z2 + pow(10, m) * (z1 - z2 - z0) + z0
+if __name__ == "__main__":
+    karatsuba1 = karatsuba(21, 10)
+    print(karatsuba1)
