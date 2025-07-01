@@ -604,7 +604,107 @@ def permute(nums):
 
     backtrack(0)
     return result
+
+###回溯算法应用案例---N皇后问题（待了解）
+"""
+题目：
+按照国际象棋的规则，皇后可以攻击与之处在同一行或同一列或同一斜线上的棋子。
+n皇后问题研究的是如何将n个皇后放置在n×n的棋盘上，并且使皇后彼此之间不能相互攻击。给一个整数n，返回所有的解决方案。每一个方案中 'Q' 和 '.' 分别代表了皇后和空位。
+
+	输入：n = 4
+	输出：[[".Q..","...Q","Q...","..Q."],["..Q.","Q...","...Q",".Q.."]]
+解释：如上图所示，4皇后问题存在两个不同的解法。
+
+"""
+def n_queens(n):
+    result = []
+    cols = set()  # 记录哪些列有皇后
+    diag1 = set()  # 记录哪些主对角线上有皇后
+    diag2 = set()  # 记录哪些副对角线上有皇后
+
+    # 初始化棋盘
+    board = [["." for _ in range(n)] for _ in range(n)]
+
+    def backtrack(row):
+        # 如果已经放置了n个皇后，说明找到一个解
+        if row == n:
+            result.append(["".join(row) for row in board])
+            return
+
+        for col in range(n):
+            # 检查当前列和对角线是否有皇后
+            if col in cols or (row - col) in diag1 or (row + col) in diag2:
+                continue  # 如果有冲突，跳过当前列
+
+            # 放置皇后
+            board[row][col] = "Q"
+            # 标记当前列和对角线
+            cols.add(col)
+            diag1.add(row - col)
+            diag2.add(row + col)
+
+            # 递归处理下一行
+            backtrack(row + 1)
+
+            # 回溯，删除当前位置的皇后，并清理列和对角线的标记
+            board[row][col] = "."
+            cols.remove(col)
+            diag1.remove(row - col)
+            diag2.remove(row + col)
+
+    backtrack(0)
+    return result
+
+
+# if __name__ == '__main__':
+#     print(permute([1,2,3,4]))
+
+
+""""
+贪心算法
+    1. 基本概念：采取的是逐步选择当前状态最优的选项（即局部最优解），并期望通过这些局部最优解得到全局最优解；
+    
+    2. 贪心算法的特点：
+        a. 选择性： 在每一步选择中，贪心算法根据某种启发式策略选择局部最优解；
+        b. 不可回溯：一旦做出了选择，就不能回退或者重新考虑；
+        c. 局部最优：每一步的选择都依赖于局部最优，但并不保证整个问题能得到全局最优解；
+    3. 全局最优的控制条件：
+        a. 贪心选择性质：通过局部最优的选择可以导出全局最优解；
+        b. 最优子结构：问题的最优解包含子问题的最优解
+
+"""
+###贪心算法应用---最大交换（了解即可）
+"""
+题目：
+现有一个非负整数，至多可以交换一次数字中的任意两位。返回能得到的最大值。
+示例：
+	输入：2736
+	输出：7236
+解释：交换数字2和数字7。
+
+贪心的体现：就是先比较交换再比较，记录比较的结果，然后再恢复原数组，再进行下一次比较交换比较
+
+"""
+
+def maxinumSwap(nums):
+    result = nums
+    list_nums = list(str(nums))
+    max_index = -1
+    for i in range(len(list_nums)-1 , -1,-1):
+        if list_nums[i] > list_nums[max_index]:
+            max_index = i
+        else: # 左边（十进制高位）的小于右边（十进制地位）的，则要交换贪心比较
+            list_nums[i] , list_nums[max_index] = list_nums[max_index] ,list_nums[i]
+            #贪心比较完，将结果结果记录，进行下一次比较
+            result = max(result, int(''.join(list_nums)))
+            #再交换回来，进行下一次贪心比较
+            list_nums[i] , list_nums[max_index] = list_nums[max_index] ,list_nums[i]
+    return result
+
 if __name__ == '__main__':
-    print(permute([1,2,3,4]))
+    nums = 2736
+    print(maxinumSwap(nums))
+
+
 
 
