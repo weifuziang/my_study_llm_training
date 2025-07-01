@@ -338,7 +338,7 @@ f(n): 将source移走n-1个元素剩下的元素n,全部移动到target
 """
 
 
-def print_abc():
+def print_abc(a, b, c):
     """打印3个柱子"""
     print("a:", a)
     print("b:", b)
@@ -354,15 +354,15 @@ def hanota(n, source, target, buffer):
 
     # 1. 将 n-1 个盘子从源柱子移动到缓冲柱子
     hanota(n - 1, source, buffer, target)
-    print_abc()
+    print_abc(source, target, buffer)
 
     # 2. 将第 n 个盘子从源柱子移动到目标柱子
     hanota(1, source, target, buffer)
-    print_abc()
+    print_abc(source, target, buffer)
 
     # 3. 将 n-1 个盘子从缓冲柱子移动到目标柱子
     hanota(n - 1, buffer, target, source)
-    print_abc()
+    print_abc(source, target, buffer)
 
 
 # if __name__ == "__main__":
@@ -372,7 +372,7 @@ def hanota(n, source, target, buffer):
 #     c = []
 #     hanota(n, a, c, b)
 
-#Karatsuba（卡拉楚巴） （作为简单了解）
+# Karatsuba（卡拉楚巴） （作为简单了解）
 """
 Karatsuba（卡拉楚巴）大整数乘法算法  
     1. 基本原理： 一种高效的大整数乘法算法，关键思想是通过分治法减少了传统乘法的计算量，从而降低了***乘法的时间复杂度
@@ -430,6 +430,122 @@ def karatsuba(x, y):
     z2 = karatsuba(high1, high2)
 
     return pow(10, 2 * m) * z2 + pow(10, m) * (z1 - z2 - z0) + z0
+
+
+# if __name__ == "__main__":
+#     karatsuba1 = karatsuba(21, 10)
+#     print(karatsuba1)
+
+"""
+动态规划
+1. 基本概念：也是将原问题拆分为若干子问题，然后递归求解子问题，最后在组合子问题的解进而得到原问题的解；
+   对比：分治算法解决的问题，子问题通常是相互独立；而动态规划解决的问题，子问题具有重叠现象，所谓重叠现象，是指不同的子问题会有相同的子子问题；
+
+2. 现实问题：
+    a. 爬楼梯问题：爬有n个台阶的楼梯，每次可以爬1或2个台阶。有多少种不同的方法可以爬到楼顶？
+"""
+###应用---爬楼梯问题
+"""
+思考过程：由于每次只能1一个或者两个台阶，所以第n个台阶可能就是从第n-1个台阶爬1阶上来的；
+        也可能是从第n-2个台阶爬2阶上来的，所以爬到第n阶的方法数就等于爬到第n-1阶的方法数加上爬到第n-2的方法数；
+        故可以得到状态转移方程：f(n)=f(n-1)+f(n-2)
+"""
+# def climb(n):
+#     if n == 1:
+#         return 1
+#     elif n == 2:
+#         return 2
+#     else:
+#         return climb(n - 1) + climb(n - 2)
+
+###应用---最大的连续子数组之和
+"""
+思考过程：用f(x)表示以x结尾的最大子数组之和，考虑处于位置i时，有两种选择：
+        a. 与之前的子数组组成连续子数组，此时子数组之和f(i)=f(i-1) + nums[i]
+        b. 中断连续，从头开始一个新的连续子数组，此时f(i)=nums[i]
+        c. 得到的状态方程：f(i)=max(f(i-1) + nums[i],nums[i])
+"""
+
+
+def max_subarray(nums):
+    result, f = nums[0], 0
+    for i in nums:
+        # 连续子数组之和若小于0，则中断连续
+        if f < 0:
+            f = 0
+        # 累加连续子数组之和
+        f += i
+        # 更新最大值
+        if result < f:
+            result = f
+    return result
+
+
+# if __name__ == '__main__':
+#     nums = [-2, -1, -3, -4, -1, 1, -2, -5, -4]
+#     print(max_subarray(nums))
+
+"""
+0-1背包：
+    1. 题目：0-1背包问题是一个经典的动态规划问题。其基本描述是：给定一组物品，每个物品都有一个重量和一个价值，在背包容量有限的情况下，如何选择物品放入背包，使得背包中物品的总价值最大化，且总重量不超过背包的容量
+        	物品：有n个物品，每个物品i的重量为weight[i]和价值value[i]。
+        	背包容量：背包可以承载的最大重量为W。
+        	目标：选择若干物品放入背包，使得总重量不超过W，且总价值最大。
+        
+        注：每个物品只能放一次
+
+    2. 解题思路：
+    
+             相关因素：物品、背包；物品的数量 物品的重量 物品的价值 背包的容量；
+             
+             定义一个二维数组dp[i][j] 表示前i个物品中，总重量不超过j的情况下，能够取得的最大价值
+             a. i表示考虑第i个物品；
+             b. 表示背包当前容量为j;
+             
+             状态转移
+             a. 对于每个物品i,有两个选择：
+             c. 不选择第i个物品，此时最大价值就是前i-1个物品在容量j下的最大价值，即dp[i-1][j]
+             d. 选择第i个物品：此时背包剩余容量为j-weighti ,所以最大价值为valuei = dp[i-1][j-weighti],前提是j>=wi
+             状态转移方程：dp[i][j]=max(dp[i-1][j],dp[i-1][j-weighti]))
+             
+    3. 优化点： 当i=1 ,j=1,2,3时， 其中，j=2,3循环是无意义的！ 因为在i=1(只有一个物品的情况下)，把背包容量扩大，针对于0-1背包问题是没有意义的；
+    
+    4. 总结：
+            a. 现有逻辑思路，然后将逻辑思路转化为数理逻辑，最后再转化为代码实现；
+            b. 核心逻辑就是：抽象出当前这物品i 放与不放的抉择，在什么条件下放什么的逻辑过程； 
+                当前物品i的前一次背包状态,即价值: dp[i-1][j]
+                 当前物品i,放进去后，本次背包的状态，即价值：valuei + dp[i][j-weighti]
+    5. 不理解的点???：dp[i][j-weighti]中的j-weighti ???
+       拉个屎之后理解：j-weighti其实就是，总的背包容量减去当前物品i的重量之后，剩下的容量还够容纳之前被放过的物品i-1位置的容量；
+                    之所以是i-1的原因是，执行下面的代码可以看到，i-1那一类其实是记录了不同背包容量j的物品价值；
+               
+            
+    
+"""
+def knapsack(weights, values, W):
+    n = len(weights)
+    # 初始化二维数组dp，dp[i][j]表示前i个物品中，背包容量为j时的最大价值
+    dp = [[0] * (W + 1) for _ in range(n)]
+
+    # 每次增加一个可选物品，增加物品后遍历一次背包重量
+    for i in range(n):
+        for j in range(1, W + 1):
+            # 如果当前物品放的进背包，进行比较
+            if weights[i] <= j:
+                dp[i][j] = max(dp[i - 1][j], values[i] + dp[i - 1][j - weights[i]])
+            # 如果当前物品放不进背包，使用上轮相同j的状态
+            else:
+                dp[i][j] = dp[i - 1][j]
+
+            print(f"前{i + 1}个物品，背包容量为{j}时")
+            for row in range(len(dp)):
+                print(dp[row])
+
+    return dp[n - 1][W]
+
 if __name__ == "__main__":
-    karatsuba1 = karatsuba(21, 10)
-    print(karatsuba1)
+    weights = [1, 2, 2]  # 物品的重量
+    values = [9, 2, 20]  # 物品的价值
+    W = 3  # 背包的最大容量
+    print(knapsack(weights, values, W))
+
