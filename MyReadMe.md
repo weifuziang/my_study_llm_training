@@ -3,3 +3,7 @@
     pip install matplotlib 
     pip3 install numpy
 
+2. 如果用的是conda环境
+   conda install numpy  
+   conda install matplotlib  
+
