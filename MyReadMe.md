@@ -7,4 +7,8 @@
    conda install numpy  
    conda install matplotlib 
    conda install scikit-learn
+   conda install pandas 
+   conda install seaborn
 
+3. jupyter启动
+    jupyter notebook --port 9999
