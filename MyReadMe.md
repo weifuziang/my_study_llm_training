@@ -12,3 +12,5 @@
 
 3. jupyter启动
     jupyter notebook --port 9999
+
+4.  PowerShell常用命令
