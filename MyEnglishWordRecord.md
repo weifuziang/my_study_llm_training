@@ -17,3 +17,11 @@
 3. F:\MyStudy\LLM\my_codes\my_study_llm_training\machine_learning\3_gradient_descent.ipynb
 
 3.1 scatter 散射、离散点
+
+4. 模型评估指标
+
+4.1 Confusion Matrix 混淆矩阵
+4.2 metrics 指标
+4.3 accuracy_score  准确率
+4.4 precision_score 精确度评分
+4.5 classification_report 分类报告
