@@ -12,3 +12,8 @@
 2. F:\MyStudy\LLM\my_codes\my_study_llm_training\machine_learning\2_regularization.py
 
 2.1 regularization 正规化、正则化
+
+
+3. F:\MyStudy\LLM\my_codes\my_study_llm_training\machine_learning\3_gradient_descent.ipynb
+
+3.1 scatter 散射、离散点
