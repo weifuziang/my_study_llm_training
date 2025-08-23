@@ -47,6 +47,16 @@ def forward(network ,x):
 
     return y
 
+#测试主流程
+network = init_network()
+
+#定义数据: 为什么每个特征只有一个数据呢，如果是多个怎么弄
+x = np.array([1.0,0.5])
+
+#向前传播
+y= forward(network, x)
+print(y)
+
 
 
 

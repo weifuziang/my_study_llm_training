@@ -25,3 +25,10 @@
 4.3 accuracy_score  准确率
 4.4 precision_score 精确度评分
 4.5 classification_report 分类报告
+
+5. deep_learning
+
+recognizer 识别
+preprocessing 预处理
+axis 轴
+accuracy 准确性 
