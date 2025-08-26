@@ -32,3 +32,8 @@ recognizer 识别
 preprocessing 预处理
 axis 轴
 accuracy 准确性 
+mean squared error 均方误差
+gradient 梯度
+enumerate 枚举
+scale 规模
+

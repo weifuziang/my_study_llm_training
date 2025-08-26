@@ -63,13 +63,19 @@ if __name__ == '__main__':
 
     # 2. 创建模型：个人理解有点牵强
     network = init_network()
+    print(network['W1'].shape)
+    print(network['W2'].shape)
+    print(network['W3'].shape)
+    print(network['b1'].shape)
+    print(network['b2'].shape)
+    print(network['b3'].shape)
 
     # 3. 前向传播（测试）：个人理解是创建模型的一部分，完全可以归纳到“创建模型”中
     # 得到的是可能是0~9这个十个数字，每一个数字的概率值，即 1260 * 10 也就是说每一行有十个概率值
     y_proba = forward(network, x)
     # print(x.shape, y.shape)
-    print(y_proba.shape)
-    print(y_proba)
+    # print(y_proba.shape)
+    # print(y_proba)
 
     # 4. 将分类概率转化为分类标签:
     # argmax()函数中 axis=1代表列，该函数意思就是从每一行数据中，按列的位置做比较，获取最大的概率值对应的index
@@ -86,4 +92,23 @@ if __name__ == '__main__':
     accuracy_cnt = np.sum(y_pred == y)
     #获取总共的数据条数
     n = y_pred.shape[0]
+    print(accuracy_cnt / n)
+
+
+    #6. 循环迭代：分批次做测试，向前传播，并累积预测准确个数
+    batch_size=100
+    accuracy_cnt = 0
+    n=x.shape[0]
+
+    for i in range(0,n,batch_size):
+        #取出当前批次的数据
+        x_batch = x[i:i + batch_size]
+        #向前传播
+        y_batch_proba = forward(network, x_batch)
+        #将输出分类概率转换为分类标签
+        y_pre = np.argmax(y_batch_proba, axis=1)
+        #累加准确个数
+        accuracy_cnt +=np.sum(y_pre == y[i:i+batch_size])
+
+    #计算分类概率
     print(accuracy_cnt / n)
